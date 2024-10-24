@@ -1,0 +1,292 @@
+/* use <div class='instructions'> */
+.instructions {
+    line-height: 1.5;
+    max-width: 800px;
+    margin-right: 300px;
+    margin-left: 300px;
+    text-align: left;
+    background-color: #f0f0f0;
+    padding: 20px;
+    border: 2px solid #f0f0f0b6;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2)
+}
+
+/* override jspsych.css */
+.jspsych-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+/* override jspsych.css */
+.jspsych-btn:hover {
+    background-color: #0056b3;
+}
+
+#root {
+    background-color: #eee;
+}
+
+/* override plugin-survey-multi-choice.js */
+/* #jspsych-survey-multi-choice-form label.jspsych-survey-multi-choice-text input[type='radio'] {
+    margin-right: 0.5em;
+}
+#jspsych-survey-multi-choice-form .jspsych-survey-multi-choice-question {
+    text-align: center;
+} */
+
+/* use <div class='emoji-containter'> */
+/* .emoji-container {
+    text-align: center;
+} */
+
+/* use JsPsych parameter css_classes: ["emojis"] */
+/* .emojis {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+} */
+
+/* use <span class='emoji-option'> */
+/* .emoji-option {
+    font-size: 32px;
+} */
+
+/* override plugin-survey-likert.js */
+/* #jspsych-survey-likert-form .jspsych-survey-likert-statement {
+    font-size: 18px
+} */
+
+/* override plugin-survey-likert.js */
+/* #jspsych-survey-likert-form .jspsych-survey-likert-opts {
+    font-size: 16px;
+} */
+
+/* use <div class='social-media-feed'> */
+.social-media-feed {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    margin-bottom: 20px; /* add space below image */
+    padding: 20px;
+    box-sizing: border-box;
+}
+.social-media-feed img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    border: 1px solid #e1e8ed;
+    border-radius: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.slider-question {
+    margin-bottom: 30px; /* add space between question and slider */
+}
+
+/* override plugin-html-slider-response.js */
+.jspsych-html-slider-response-container {
+    position: relative;
+    margin-bottom: 2em;
+}
+
+.custom-slider-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 25px; /* move labels down */
+}
+
+.custom-slider-labels span {
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+}
+
+.jspsych-html-slider-response-container input[type="range"] {
+    margin-bottom: 5px;
+}
+
+/* override plugin-survey-html-form.js */
+#jspsych-survey-html-form {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    /* background-color: #f0f0f0;
+    border: 2px solid #f0f0f0b6; */
+    background-color: #f8f8f8;
+    border: 2px solid #f0f0f0b6;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.survey-container {
+    margin-bottom: 20px;
+}
+
+.survey-question {
+    margin-bottom: 20px;
+}
+
+.survey-question label {
+    display: block;
+    margin-bottom: 10px;
+    /* margin-bottom: 30px; */
+    font-weight: bold;
+}
+
+.survey-question select,
+.survey-question input[type="number"] {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.radio-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.radio-group input[type="radio"] {
+    margin-right: 5px;
+}
+
+
+/* custom likert scale */
+.likert-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.likert-scale {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    background: linear-gradient(to right, #ccc, #ccc) no-repeat center/100% 2px;
+}
+
+.likert-option {
+    position: relative;
+    width: 20px;
+    height: 20px;
+}
+
+.likert-option input[type="radio"] {
+    opacity: 0;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    cursor: pointer;
+}
+
+.likert-option label {
+    width: 20px;
+    height: 20px;
+    background: white;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+
+.likert-option input[type="radio"]:checked + label {
+    background: #4a90e2;
+    border-color: #4a90e2;
+}
+
+.likert-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 5px;
+}
+
+.likert-labels span {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+    padding: 0 5px;
+}
+
+/* styles for the social media usage slider */
+.slider-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.slider-container input[type="range"] {
+    flex-grow: 1;
+    margin-right: 10px;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 15px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+}
+
+.slider-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.slider-container input[type="range"]::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.slider-container output {
+    min-width: 30px;
+    text-align: right;
+}
+
+/* mimic plugin-survey-multi-select.js */
+.multi-select-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.multi-select-options label {
+    display: flex;
+    justify-content: flex-start; /* left align */
+    /* align-items: center; */
+    gap: 10px;
+    font-weight: normal;
+    margin-bottom: -5px; /* decrease space between options */
+}
+
+.multi-select-options input[type="checkbox"] {
+    margin: 0;
+}
