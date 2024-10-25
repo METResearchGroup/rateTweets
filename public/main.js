@@ -63,28 +63,26 @@ const jsPsych = initJsPsych({
         // filter out unnecessary columns
         var csv = allData.filterColumns(['prolific_id', 'participant_id', 'trial_type', 'trial_index', 'image_shown', 'response', 'gender', 'age', 'language', 'education', 'employment', 'party', 'party_lean', 'political_ideology', 'political_follow', 'rep_id', 'dem_id', 'sm_use', 'sm_use_slider', 'sm_use_poli', 'sm_use_poli_slider', 'sm_post_poli', 'sm_post_poli_slider', 'share_why']).csv();
         
-        fetch('/save-data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({csv: csv}),
-        })
-        .then(response => response.text())
-        .then(result => {
-            console.log('Success:', result);
-            document.body.innerHTML = '<p>Thank you for participating! Your data has been saved.</p>';
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.body.innerHTML = '<p>There was an error saving your data.</p>';
-        });
+        saveExperimentData(csv)
+            .then(() => {
+                document.body.innerHTML = '<p>Thank you for participating! Your data has been saved.</p>';
+            })
+            .catch(error => {
+                console.error('Error saving data:', error);
+                document.body.innerHTML = '<p>There was an error saving your data.</p>';
+            });
     }
 });
 
-async function getParticipantID(prolificID) {
-    console.log('Requesting participant ID for:', prolificID);
-    const response = await fetch(`/get-participant-id?prolific_id=${prolificID}`);
+
+// API gateway URLs
+const GET_PARTICIPANT_ID_URL = 'https://n2w6sd413g.execute-api.us-east-2.amazonaws.com/get-participant-id';
+const SAVE_DATA_URL = 'https://n2w6sd413g.execute-api.us-east-2.amazonaws.com/save-jspsych-data';
+
+// function to get participant ID
+async function getParticipantId(prolificId) {
+    console.log('Requesting participant ID for:', prolificId);
+    const response = await fetch(`${GET_PARTICIPANT_ID_URL}?prolific_id=${prolificId}`);
     if (!response.ok) {
         const errorText = await response.text();
         console.error('Error response:', response.status, errorText);
@@ -95,6 +93,81 @@ async function getParticipantID(prolificID) {
     return data.participantID;
 }
 
+// function to save experiment data
+async function saveExperimentData(csvData) {
+    const response = await fetch(SAVE_DATA_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ csv: csvData }),
+    });
+    if (!response.ok) {
+        throw new Error('Failed to save experiment data');
+    }
+    const result = await response.json();
+    console.log(result.message);
+}
+
+// function to generate a list of 20 images for each participant
+function generateImageList(ParticipantID) {
+    let N = ParticipantID % 350; // ensures that N is always between 1 and 350
+    let images = [];
+    for (let k = 0; k < 20; k++) {
+        let image_index = ((N + 35 * k) % 700) + 1; // creates sequence of numbers starting at N and increasing by 35 each time the loop runs; range is 1-700
+        images.push(`img/full_700/Slide${image_index}.png`);
+    }
+    return images;
+}
+
+// function to generate 20 image slider trials
+function generateImageSliderTrials(images) {
+    return images.map((img, index) => {
+        let trial = {
+            type: jsPsychHtmlSliderResponse,
+            stimulus: function() {
+                return `
+                    <div class="social-media-feed">
+                        <img src="${img}" class="stimulus">
+                    </div>
+                    <p class="slider-question">How likely would you be to post this message to your own social media network?</p>
+                `;
+            },
+            labels: ['1', '2', '3', '4', '5', '6', '7'],
+            prompt: "",
+            button_label: 'Next >',
+            data: {
+                trial_index: index,
+                image_shown: img.split('/').pop()
+            },
+            require_movement: true,
+            slider_width: 600,
+            min: 1,
+            max: 7,
+            step: 1,
+            slider_start: 4,
+            on_load: function() {
+                var sliderContainer = document.querySelector('.jspsych-html-slider-response-container');
+                var customLabels = document.createElement('div');
+                customLabels.className = 'custom-slider-labels';
+                customLabels.innerHTML = `
+                    <span>Not at all likely</span>
+                    <span>Somewhat likely</span>
+                    <span>Very likely</span>
+                `;
+                sliderContainer.appendChild(customLabels);
+            }
+        };
+        
+        if (window.makeRequireMovementOptional) {
+            trial = window.makeRequireMovementOptional(trial);
+        }
+        
+        return trial;
+    });
+}
+
+// main experiment setup function
 async function setupExperiment() {
     try {
         const urlParams = new URLSearchParams(window.location.search);
@@ -105,84 +178,11 @@ async function setupExperiment() {
             throw new Error('No Prolific ID provided');
         }
 
-
-        // function to generate a list of 20 images for each participant
-        function generateImageList(ParticipantID) {
-            let N = ParticipantID % 350; // ensures that N is always between 1 and 350
-            let images = [];
-            for (let k = 0; k < 20; k++) {
-                let image_index = ((N + 35 * k) % 700) + 1; // creates sequence of numbers starting at N and increasing by 35 each time the loop runs; range is 1-700
-                images.push(`img/full_700/Slide${image_index}.png`);
-            }
-            return images;
-        }
-
-        // (350 * 20) / 700 = 10
-        // ((N + 35 * k) % 700) + 1, where k goes from 0 to 19
-        // 350 unique starting points that increase by 35 each time the loop runs
-        // then modulus 700 to ensure that the sequence loops back around
-        // w/ exactly 350 participants, each of the 700 stimuli will be shown a total of 10 times
-
-
-        const ParticipantID = await getParticipantID(prolificID);
+        const ParticipantID = await getParticipantId(prolificID);
         let participant_images = generateImageList(ParticipantID);
-
-
-        // need to show 20 images, one at a time, with a slider for rating likelihood of posting
-        // images should be shown in random order
-        // images shown should be determined by the function generateImageList
 
         // shuffle images
         participant_images = jsPsych.randomization.shuffle(participant_images);
-
-        // function to generate 20 image slider trials
-        function generateImageSliderTrials(images) {
-            return images.map((img, index) => {
-                let trial = {
-                    type: jsPsychHtmlSliderResponse,
-                    stimulus: function() {
-                        return `
-                            <div class="social-media-feed">
-                                <img src="${img}" class="stimulus">
-                            </div>
-                            <p class="slider-question">How likely would you be to post this message to your own social media network?</p>
-                        `;
-                    },
-                    labels: ['1', '2', '3', '4', '5', '6', '7'],
-                    prompt: "", // remove prompt
-                    button_label: 'Next >',
-                    data: {
-                        trial_index: index,
-                        image_shown: img.split('/').pop() // save just image filename to data, not entire path
-                    },
-                    require_movement: true,
-                    slider_width: 600,
-                    min: 1,
-                    max: 7,
-                    step: 1,
-                    slider_start: 4,
-                    on_load: function() {
-                        // add custom labels below the slider
-                        var sliderContainer = document.querySelector('.jspsych-html-slider-response-container');
-                        var customLabels = document.createElement('div');
-                        customLabels.className = 'custom-slider-labels';
-                        customLabels.innerHTML = `
-                            <span>Not at all likely</span>
-                            <span>Somewhat likely</span>
-                            <span>Very likely</span>
-                        `;
-                        sliderContainer.appendChild(customLabels);
-                    }
-                };
-                
-                // if debug is true, make require_movement optional
-                if (window.makeRequireMovementOptional) {
-                    trial = window.makeRequireMovementOptional(trial);
-                }
-                
-                return trial;
-            });
-        }
 
         jsPsych.data.addProperties({participant_id: ParticipantID, prolific_id: prolificID});
 
@@ -201,30 +201,12 @@ async function setupExperiment() {
         };
         timeline.push(welcome);
 
-        // function to check whether consent has been given
-        // present external consent page to participant
-
         var instruct = {
             type: jsPsychInstructions,
             pages: ["<div class='instructions'>Great! You are now ready to begin the task.<br><br>You will see 20 Twitter messages (tweets) in total. Your job is to rate how likely you would be to post each message to your own social media network, on a scale from 1 (not at all likely) to 7 (very likely).<br><br>Press <b>Next</b> to begin.</div>"],
             show_clickable_nav: true
         };
         timeline.push(instruct);
-
-        // var scroll = {
-        //     type: jsPsychHtmlButtonResponse,
-        //     stimulus: function() {
-        //         var html = '<div class="social-media-feed">' +
-        //             participant_images.map(img => `<img src="${img}" class="stimulus">`).join('') +
-        //             '</div>';
-        //         return html;
-        //     },
-        //     choices: ['Next'],
-        //     data: {
-        //         images_shown: participant_images
-        //     }
-        // };
-        // timeline.push(scroll);
 
         const imageSliderTrials = generateImageSliderTrials(participant_images);
         timeline.push(...imageSliderTrials);
@@ -237,9 +219,7 @@ async function setupExperiment() {
         timeline.push(demo_instruct);
 
         timeline.push(demographicsSurvey);
-
         timeline.push(politicalSurvey);
-
         timeline.push(socialMediaSurvey);       
 
         jsPsych.run(timeline);
