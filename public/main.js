@@ -1,4 +1,5 @@
 const jsPsych = initJsPsych({
+    use_webaudio: false, // gets rid of AudioContext console warning
 
     on_finish: function() {
 
