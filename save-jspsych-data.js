@@ -1,12 +1,13 @@
 // saves experiment data to S3 bucket
 
-const AWS = require('aws-sdk');
-const s3 = new AWS.S3();
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+const s3Client = new S3Client({ region: "us-east-2" });
 
 const BUCKET_NAME = 'jspsych-rate-tweets';
 const DATA_PREFIX = 'data/';
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
     // parse incoming JSON body
     const body = JSON.parse(event.body);
 
@@ -25,12 +26,12 @@ exports.handler = async (event) => {
 
     try {
         // write csv data to S3
-        await s3.putObject({
+        await s3Client.send(new PutObjectCommand({
             Bucket: BUCKET_NAME,
             Key: DATA_PREFIX + filename,
             Body: body.csv,
             ContentType: 'text/csv'
-        }).promise();
+        }));
 
         return {
             statusCode: 200,

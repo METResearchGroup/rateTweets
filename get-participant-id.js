@@ -1,12 +1,13 @@
 // gets participant IDs extracted from frontend
 
-const AWS = require('aws-sdk');
-const s3 = new AWS.S3();
+import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+
+const s3Client = new S3Client({ region: "us-east-2" });
 
 const BUCKET_NAME = 'jspsych-rate-tweets';
 const ASSIGNMENTS_FILE = 'data/participant_assignments.json';
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
     const prolificID = event.queryStringParameters.prolific_id;
 
     if (!prolificID) {
@@ -22,12 +23,21 @@ exports.handler = async (event) => {
 
     try {
         // read current assignments from S3
-        const data = await s3.getObject({
-            Bucket: BUCKET_NAME,
-            Key: ASSIGNMENTS_FILE
-        }).promise();
-
-        let assignments = JSON.parse(data.Body.toString());
+        let assignments;
+        try {
+            const data = await s3Client.send(new GetObjectCommand({
+                Bucket: BUCKET_NAME,
+                Key: ASSIGNMENTS_FILE
+            }));
+            assignments = JSON.parse(await data.Body.transformToString());
+        } catch (error) {
+            if (error.name === 'NoSuchKey') {
+                assignments = {};
+            } else {
+                console.error('Error reading assignments from S3:', error);
+                throw error;
+            }
+        }
 
         if (assignments[prolificID]) {
             return {
@@ -45,12 +55,12 @@ exports.handler = async (event) => {
         assignments[prolificID] = newParticipantID;
 
         // write updated assignments back to S3
-        await s3.putObject({
+        await s3Client.send(new PutObjectCommand({
             Bucket: BUCKET_NAME,
             Key: ASSIGNMENTS_FILE,
             Body: JSON.stringify(assignments),
             ContentType: 'application/json'
-        }).promise();
+        }));
 
         return {
             statusCode: 200,
