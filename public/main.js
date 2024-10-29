@@ -116,7 +116,7 @@ function generateImageList(ParticipantID) {
     let images = [];
     for (let k = 0; k < 20; k++) {
         let image_index = ((N + 35 * k) % 700) + 1; // creates sequence of numbers starting at N and increasing by 35 each time the loop runs; range is 1-700
-        images.push(`img/full_700/Slide${image_index}.png`);
+        images.push(`img/Slide${image_index}.png`);
     }
     return images;
 }

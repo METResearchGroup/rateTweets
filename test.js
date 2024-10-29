@@ -10,7 +10,7 @@ function generateImageList(ParticipantID) {
     let images = [];
     for (let k = 0; k < 20; k++) {
         let image_index = ((N + 35 * k) % 700);
-        images.push(`img/full_700/Slide${image_index + 1}.png`);
+        images.push(`img/Slide${image_index + 1}.png`);
     }
     return images;
 }
