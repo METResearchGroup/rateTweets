@@ -62,7 +62,7 @@ const jsPsych = initJsPsych({
 
         // var csv = allData.csv // collects all data
         // filter out unnecessary columns
-        var csv = allData.filterColumns(['prolific_id', 'participant_id', 'trial_type', 'trial_index', 'image_shown', 'response', 'gender', 'age', 'language', 'education', 'employment', 'party', 'party_lean', 'political_ideology', 'political_follow', 'rep_id', 'dem_id', 'sm_use', 'sm_use_slider', 'sm_use_poli', 'sm_use_poli_slider', 'sm_post_poli', 'sm_post_poli_slider', 'share_why']).csv();
+        var csv = allData.filterColumns(['prolific_id', 'participant_id', 'trial_type', 'trial_index', 'image_shown', 'consented', 'response', 'gender', 'age', 'language', 'education', 'employment', 'party', 'party_lean', 'political_ideology', 'political_follow', 'rep_id', 'dem_id', 'sm_use', 'sm_use_slider', 'sm_use_poli', 'sm_use_poli_slider', 'sm_post_poli', 'sm_post_poli_slider', 'share_why']).csv();
         
         saveExperimentData(csv)
             .then(() => {
@@ -201,6 +201,8 @@ async function setupExperiment() {
             show_clickable_nav: true
         };
         timeline.push(welcome);
+
+        timeline.push(consent);
 
         var instruct = {
             type: jsPsychInstructions,
