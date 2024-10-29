@@ -112,7 +112,7 @@ async function saveExperimentData(csvData) {
 
 // function to generate a list of 20 images for each participant
 function generateImageList(ParticipantID) {
-    let N = ParticipantID % 350; // ensures that N is always between 1 and 350
+    let N = ParticipantID % 385; // ensures that N is always between 1 and 350 (increased to 385 to account for extra participants)
     let images = [];
     for (let k = 0; k < 20; k++) {
         let image_index = ((N + 35 * k) % 700) + 1; // creates sequence of numbers starting at N and increasing by 35 each time the loop runs; range is 1-700
