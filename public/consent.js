@@ -98,12 +98,13 @@ const consent = {
         data.consented = data.response === 1 ? 1 : 0; // 1 if "I agree", 0 if "I do not agree"
 
         if (data.response === 0) { // 0 is the index of "I do not agree"
-            jsPsych.endExperiment(`
+            // display message directly in document body
+            document.body.innerHTML = `
                 <div style="text-align: center; margin-top: 50px;">
                     <h2>You have not consented to participate in this study.</h2>
                     <p>Thank you for your time. You may now close this window.</p>
                 </div>
-            `);
+            `;
         }
     }
 };
