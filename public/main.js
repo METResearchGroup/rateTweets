@@ -66,7 +66,14 @@ const jsPsych = initJsPsych({
         
         saveExperimentData(csv)
             .then(() => {
-                document.body.innerHTML = '<p>Thank you for participating! Your data has been saved.</p>';
+                document.body.innerHTML = `
+                    <div style="text-align: center; margin-top: 50px;">
+                        <p>Thank you for participating! 
+                        <a href="https://app.prolific.com/submissions/complete?cc=CV0XRWGP" target="_blank">
+                            <b>Click here</b></a> to be redirected to Prolific (completion code <b>CV0XRWGP</b>).
+                        </p>
+                    </div>
+                `;
             })
             .catch(error => {
                 console.error('Error saving data:', error);
@@ -131,7 +138,7 @@ function generateImageSliderTrials(images) {
                     <div class="social-media-feed">
                         <img src="${img}" class="stimulus">
                     </div>
-                    <p class="slider-question">How likely would you be to post this message to your own social media network?</p>
+                    <p class="slider-question">How <b>likely</b> would you be to post this message to your own social media network?</p>
                 `;
             },
             labels: ['1', '2', '3', '4', '5', '6', '7'],
@@ -206,7 +213,7 @@ async function setupExperiment() {
 
         var instruct = {
             type: jsPsychInstructions,
-            pages: ["<div class='instructions'>Great! You are now ready to begin the task.<br><br>You will see 20 Twitter messages (tweets) in total. Your job is to rate how likely you would be to post each message to your own social media network, on a scale from 1 (not at all likely) to 7 (very likely).<br><br>Press <b>Next</b> to begin.</div>"],
+            pages: ["<div class='instructions'>Great! You are now ready to begin the task.<br><br>You will see 20 social media messages in total. Your job is to rate how likely you would be to post each message to your own social media network, on a scale from 1 (not at all likely) to 7 (very likely).<br><br>Note: All usernames have been anonymized.<br><br>Press <b>Next</b> to begin.</div>"],
             show_clickable_nav: true
         };
         timeline.push(instruct);
