@@ -124,9 +124,9 @@ const GET_PARTICIPANT_ID_URL = 'https://n2w6sd413g.execute-api.us-east-2.amazona
 const SAVE_DATA_URL = 'https://n2w6sd413g.execute-api.us-east-2.amazonaws.com/save-jspsych-data';
 
 // function to get participant ID
-async function getParticipantId(prolificId) {
-    console.log('Requesting participant ID for:', prolificId);
-    const response = await fetch(`${GET_PARTICIPANT_ID_URL}?prolific_id=${prolificId}`);
+async function getParticipantId(prolificId, politicalAffiliation) {
+    console.log('Requesting participant ID for:', prolificId, 'with affiliation:', politicalAffiliation);
+    const response = await fetch(`${GET_PARTICIPANT_ID_URL}?prolific_id=${prolificId}&party=${politicalAffiliation}`);
     if (!response.ok) {
         const errorText = await response.text();
         console.error('Error response:', response.status, errorText);
@@ -179,26 +179,18 @@ async function saveExperimentData(csvData) {
 
 // function to generate a list of images for each participant
 function generateImageList(ParticipantID, politicalParty) {
-    const demImages = 560;
-    const repImages = 570;
-    
-    let N;
     let baseFolder;
     let numImages;
     let availableSlides;
     
     if (politicalParty === 'democrat' || politicalParty === 'lean_democrat') {
-        // N = (ParticipantID - 1) % 200; // 200 dem
-        N = (ParticipantID - 1) % 240; // allow for 40 more dem
         baseFolder = 'dem';
-        numImages = 28;  // 28 images per democrat
-        availableSlides = slideNumbers.dem;  // globally available from slide_numbers.js
+        numImages = 28;
+        availableSlides = slideNumbers.dem;
     } else if (politicalParty === 'republican' || politicalParty === 'lean_republican') {
-        // N = (ParticipantID - 1) % 190; // 190 rep
-        N = (ParticipantID - 1) % 228; // allow for 38 more rep participants
         baseFolder = 'rep';
-        numImages = 30;  // 30 images per republican
-        availableSlides = slideNumbers.rep;  // globally available from slide_numbers.js
+        numImages = 30;
+        availableSlides = slideNumbers.rep;
     } else {
         console.error('Invalid political party');
         return [];
@@ -208,9 +200,9 @@ function generateImageList(ParticipantID, politicalParty) {
     for (let k = 0; k < numImages; k++) {
         let array_index;
         if (baseFolder === 'dem') {
-            array_index = ((N + 20 * k) % availableSlides.length);
+            array_index = ((ParticipantID - 1 + 20 * k) % availableSlides.length);
         } else {
-            array_index = ((N + 19 * k) % availableSlides.length);
+            array_index = ((ParticipantID - 1 + 19 * k) % availableSlides.length);
         }
         const actualSlideNumber = availableSlides[array_index];
         images.push(`img/${baseFolder}/Slide${actualSlideNumber}.png`);
@@ -230,9 +222,6 @@ async function setupExperiment() {
             throw new Error('No Prolific ID provided');
         }
 
-        const ParticipantID = await getParticipantId(prolificID);
-        jsPsych.data.addProperties({participant_id: ParticipantID, prolific_id: prolificID});
-
         var timeline = [];
 
         var welcome = {
@@ -246,8 +235,42 @@ async function setupExperiment() {
 
         timeline.push(prePolSurvey);
 
-        // Create a variable to store the images
+        // var debugTrial = {
+        //     type: jsPsychCallFunction,
+        //     func: function() {
+        //         const lastTrial = jsPsych.data.get().last(1).values()[0];
+        //         console.log("Pre-survey data:", lastTrial);
+        //         console.log("Political affiliation:", lastTrial.political_affiliation);
+        //     }
+        // };
+        // timeline.push(debugTrial);
+
+        // Create a variable to store the participant ID and images
+        let ParticipantID;  // Add this line
         let participant_images;
+
+        // Add a call-function trial to get participant ID after political survey
+        var getParticipantIdTrial = {
+            type: jsPsychCallFunction,
+            async: true,
+            func: async function(done) {  // Add done parameter
+                try {
+                    const politicalAffiliation = jsPsych.data.get().last(1).values()[0].political_affiliation;
+                    // console.log("Getting participant ID for affiliation:", politicalAffiliation);
+                    
+                    ParticipantID = await getParticipantId(prolificID, politicalAffiliation);
+                    // console.log("Successfully received ParticipantID:", ParticipantID);
+                    
+                    jsPsych.data.addProperties({participant_id: ParticipantID, prolific_id: prolificID});
+                    
+                    done(); // Signal that the async operation is complete
+                } catch (error) {
+                    console.error("Error in getParticipantIdTrial:", error);
+                    document.body.innerHTML = '<p>There was an error assigning your participant ID. Please contact the researcher.</p>';
+                }
+            }
+        };
+        timeline.push(getParticipantIdTrial);
 
         // Create a nested timeline for the image trials
         var imageTrialsBlock = {
@@ -256,7 +279,7 @@ async function setupExperiment() {
                     type: jsPsychCallFunction,
                     func: function() {
                         const politicalAffiliation = jsPsych.data.get().last(1).values()[0].political_affiliation;
-                        console.log("Political affiliation:", politicalAffiliation);
+                        // console.log("Political affiliation:", politicalAffiliation);
                         
                         participant_images = generateImageList(ParticipantID, politicalAffiliation);
                         console.log("Generated images:", participant_images);
