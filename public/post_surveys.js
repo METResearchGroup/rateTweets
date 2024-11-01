@@ -65,9 +65,9 @@ const demographicsSurvey = {
     button_label: "Next >",
     autofocus: "gender",
 
-    on_load: function() {
-        window.removeRequiredAttributes();
-    }
+    // on_load: function() {
+    //     window.removeRequiredAttributes();
+    // }
 };
 
 function createLikertOptions(name, count) {
@@ -189,7 +189,7 @@ const politicalSurvey = {
 
         setupLikertScales();
 
-        window.removeRequiredAttributes();
+        // window.removeRequiredAttributes();
     }
 };
 
@@ -296,7 +296,7 @@ const socialMediaSurvey = {
             }
         });
 
-        window.removeRequiredAttributes();
+        // window.removeRequiredAttributes();
     }
 }
 
@@ -387,7 +387,7 @@ const appropriatenessSurvey = {
 
         setupLikertScales();
 
-        window.removeRequiredAttributes();
+        // window.removeRequiredAttributes();
     }
 };
 

@@ -4,7 +4,7 @@ const jsPsych = initJsPsych({
     on_finish: function() {
 
         let allData = jsPsych.data.get();
-        console.log("Raw data:", allData.values()); // debug log
+        // console.log("Raw data:", allData.values()); // debug log
         
         // function to flatten survey responses
         function flattenSurveyResponses(data) {
@@ -100,8 +100,8 @@ const jsPsych = initJsPsych({
             'share_why'
         ]).csv();
 
-        console.log("Filtered CSV data length:", csv.length); // Debug log
-        console.log("First 100 characters of CSV:", csv.substring(0, 100)); // Debug log
+        // console.log("Filtered CSV data length:", csv.length); // Debug log
+        // console.log("First 100 characters of CSV:", csv.substring(0, 100)); // Debug log
         
         if (!csv || csv.length === 0) {
             console.error("No data collected during experiment!");
@@ -152,11 +152,11 @@ async function saveExperimentData(csvData) {
             throw new Error('No data to save');
         }
 
-        console.log('Attempting to save data of size:', csvData.length);
-        console.log('First 100 characters of data:', csvData.substring(0, 100));
+        // console.log('Attempting to save data of size:', csvData.length);
+        // console.log('First 100 characters of data:', csvData.substring(0, 100));
         
         const payload = JSON.stringify({ csv: csvData });
-        console.log('Payload size:', payload.length);
+        // console.log('Payload size:', payload.length);
 
         const response = await fetch(SAVE_DATA_URL, {
             method: 'POST',
@@ -166,9 +166,8 @@ async function saveExperimentData(csvData) {
             body: payload
         });
 
-        // log the response details
-        console.log('Response status:', response.status);
-        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+        // console.log('Response status:', response.status);
+        // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -358,12 +357,13 @@ async function setupExperiment() {
                     `;
                     sliderContainer.appendChild(customLabels);
                 }
-            }].map(trial => {
-                if (window.makeRequireMovementOptional) {
-                    return window.makeRequireMovementOptional(trial);
-                }
-                return trial;
-            }),
+            }],
+            // }].map(trial => {
+            //     if (window.makeRequireMovementOptional) {
+            //         return window.makeRequireMovementOptional(trial);
+            //     }
+            //     return trial;
+            // }),
             loop_function: function() {
                 const currentCount = jsPsych.data.get().filter({trial_type: 'html-slider-response'}).count();
                 return currentCount < participant_images.length;

@@ -36,18 +36,31 @@ const prePolSurvey = {
     button_label: "Next >",
 
     on_load: function() {
-        document.getElementById('party').addEventListener('change', function() {
+        const partySelect = document.getElementById('party');
+        const partyLeanSelect = document.getElementById('party_lean');
+        
+        // ensure the first select is required
+        partySelect.required = true;
+        
+        // add validation for the first select
+        partySelect.addEventListener('change', function() {
+            // validate party selection
+            if (!this.value || this.value === '' || this.value === 'null') {
+                this.required = true;
+                return false;
+            }
+            
             var partyLeanDiv = document.getElementById('party-lean');
             if (this.value === 'other') {
                 partyLeanDiv.style.display = 'block';
-                document.getElementById('party_lean').required = true;
+                partyLeanSelect.required = true;
             } else {
                 partyLeanDiv.style.display = 'none';
-                document.getElementById('party_lean').required = false;
+                partyLeanSelect.required = false;
             }
         });
 
-        window.removeRequiredAttributes();
+        // window.removeRequiredAttributes();
     },
     on_finish: function(data) {
         // store political affiliation for later use
