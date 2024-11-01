@@ -192,11 +192,11 @@ function generateImageList(ParticipantID, politicalParty) {
     
     if (politicalParty === 'democrat' || politicalParty === 'lean_democrat') {
         baseFolder = 'dem';
-        numImages = 28;
+        numImages = 20;
         availableSlides = slideNumbers.dem;
     } else if (politicalParty === 'republican' || politicalParty === 'lean_republican') {
         baseFolder = 'rep';
-        numImages = 30;
+        numImages = 20;
         availableSlides = slideNumbers.rep;
     } else {
         console.error('Invalid political party');
@@ -209,7 +209,7 @@ function generateImageList(ParticipantID, politicalParty) {
         if (baseFolder === 'dem') {
             array_index = ((ParticipantID - 1 + 20 * k) % availableSlides.length);
         } else {
-            array_index = ((ParticipantID - 1 + 19 * k) % availableSlides.length);
+            array_index = ((ParticipantID - 1 + 20 * k) % availableSlides.length);
         }
         const actualSlideNumber = availableSlides[array_index];
         images.push(`img/${baseFolder}/Slide${actualSlideNumber}.png`);

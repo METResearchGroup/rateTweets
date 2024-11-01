@@ -1,30 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 
-// Import the slide numbers
 const slideNumbers = require('./public/slide_numbers.js');
 
 function generateImageList(ParticipantID, politicalParty) {
-    const demImages = 560;
-    const repImages = 570;
-    
-    let N;
     let baseFolder;
     let numImages;
     let availableSlides;
     
     if (politicalParty === 'democrat' || politicalParty === 'lean_democrat') {
-        // N = (ParticipantID - 1) % 200; // 200 dem
-        N = (ParticipantID - 1) % 240; // allow for 40 more dem
         baseFolder = 'dem';
-        numImages = 28;  // 28 images per democrat
-        availableSlides = slideNumbers.dem;  // globally available from slide_numbers.js
+        numImages = 20;  // changed to 20 images per participant
+        availableSlides = slideNumbers.dem;
     } else if (politicalParty === 'republican' || politicalParty === 'lean_republican') {
-        // N = (ParticipantID - 1) % 190; // 190 rep
-        N = (ParticipantID - 1) % 228; // allow for 38 more rep participants
         baseFolder = 'rep';
-        numImages = 30;  // 30 images per republican
-        availableSlides = slideNumbers.rep;  // globally available from slide_numbers.js
+        numImages = 20;  // changed to 20 images per participant
+        availableSlides = slideNumbers.rep;
     } else {
         console.error('Invalid political party');
         return [];
@@ -32,12 +23,7 @@ function generateImageList(ParticipantID, politicalParty) {
 
     let images = [];
     for (let k = 0; k < numImages; k++) {
-        let array_index;
-        if (baseFolder === 'dem') {
-            array_index = ((N + 20 * k) % availableSlides.length);
-        } else {
-            array_index = ((N + 19 * k) % availableSlides.length);
-        }
+        let array_index = ((ParticipantID - 1 + 20 * k) % availableSlides.length);
         const actualSlideNumber = availableSlides[array_index];
         images.push(`img/${baseFolder}/Slide${actualSlideNumber}.png`);
     }
@@ -49,9 +35,11 @@ function runTest() {
     const results = [];
     const imageFrequencies = {};
     
-    // Simulate Democrat participants (including leaners)
-    // for (let participantID = 1; participantID <= 200; participantID++) {
-    for (let participantID = 1; participantID <= 200; participantID++) {
+    // test with more participants than images to show cycling
+    const numParticipantsToTest = 300; // testing with 300 participants to show pattern
+    
+    // simulate dem participants
+    for (let participantID = 1; participantID <= numParticipantsToTest; participantID++) {
         const images = generateImageList(participantID, 'democrat');
         
         results.push({
@@ -65,9 +53,8 @@ function runTest() {
         });
     }
 
-    // Simulate Republican participants (including leaners)
-    // for (let participantID = 201; participantID <= 190; participantID++) {
-    for (let participantID = 1; participantID <= 190; participantID++) {
+    // simulate rep participants
+    for (let participantID = 1; participantID <= numParticipantsToTest; participantID++) {
         const images = generateImageList(participantID, 'republican');
         
         results.push({
@@ -81,13 +68,13 @@ function runTest() {
         });
     }
 
-    // Create CSV for participant assignments
+    // CSV for participant assignments
     let csvContent = 'ParticipantID,Party';
-    // Add headers for dem images
+    // add headers for dem images
     slideNumbers.dem.forEach(num => {
         csvContent += `,dem/Slide${num}.png`;
     });
-    // Add headers for rep images
+    // add headers for rep images
     slideNumbers.rep.forEach(num => {
         csvContent += `,rep/Slide${num}.png`;
     });
@@ -96,11 +83,11 @@ function runTest() {
     results.forEach(result => {
         const images = result.images.split(',');
         
-        // Create arrays for both dem and rep images
+        // create arrays for dem and rep images
         const demArray = new Array(slideNumbers.dem.length).fill(0);
         const repArray = new Array(slideNumbers.rep.length).fill(0);
         
-        // Mark images that were shown
+        // mark inmages that were shown
         images.forEach(img => {
             const [folder, slideFile] = img.split('/').slice(1);
             const slideNum = parseInt(slideFile.match(/\d+/)[0]);
@@ -116,7 +103,7 @@ function runTest() {
         csvContent += `${result.participantID},${result.party},${demArray.join(',')},${repArray.join(',')}\n`;
     });
     
-    // Create frequency CSV
+    // freq CSV
     let frequencyCsvContent = 'image_path,Frequency\n';
     Object.entries(imageFrequencies)
         .sort(([a], [b]) => a.localeCompare(b))
@@ -131,13 +118,13 @@ function runTest() {
     fs.writeFileSync('test_data/participant_image_assignments.csv', csvContent);
     fs.writeFileSync('test_data/image_frequencies.csv', frequencyCsvContent);
 
-    // Log summary statistics
+    // summary stats
     console.log('Test completed!');
     console.log(`Total participants simulated: ${results.length}`);
     console.log('Democrat participants:', results.filter(r => r.party === 'democrat').length);
     console.log('Republican participants:', results.filter(r => r.party === 'republican').length);
     
-    // Calculate frequencies by party
+    // freq by party
     const demFreq = {};
     const repFreq = {};
     Object.entries(imageFrequencies).forEach(([img, freq]) => {
@@ -157,6 +144,23 @@ function runTest() {
     console.log(`Total unique images: ${Object.keys(repFreq).length}`);
     console.log(`Min frequency: ${Math.min(...Object.values(repFreq))}`);
     console.log(`Max frequency: ${Math.max(...Object.values(repFreq))}`);
+
+    // distribution 
+    console.log('\nViews per image after first 200 participants:');
+    const viewsAfter200 = {};
+    results.slice(0, 200).forEach(result => {
+        result.images.split(',').forEach(img => {
+            viewsAfter200[img] = (viewsAfter200[img] || 0) + 1;
+        });
+    });
+    
+    const uniqueViewCounts = [...new Set(Object.values(viewsAfter200))];
+    uniqueViewCounts.sort((a, b) => a - b);
+    uniqueViewCounts.forEach(count => {
+        const imagesWithCount = Object.entries(viewsAfter200)
+            .filter(([_, freq]) => freq === count).length;
+        console.log(`${imagesWithCount} images viewed ${count} times`);
+    });
 }
 
 runTest();
