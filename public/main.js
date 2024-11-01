@@ -233,7 +233,7 @@ async function setupExperiment() {
 
         var welcome = {
             type: jsPsychInstructions,
-            pages: ["<div class='instructions'>Welcome! In this task, you will view real social media messages sent by users who discuss politics on Twitter.<br><br>You will then be asked to <b>rate how likely you would be to post these messages to your own social media network.</b><br><br>Before we begin, please click <b>Next</b> to consent to participate.</div>"],
+            pages: ["<div class='instructions'>Welcome! In this task, you will view real social media messages sent by users who discuss politics on Twitter/X.<br><br>You will then be asked to <b>rate how likely you would be to post these messages to your own social media network.</b><br><br>Before we begin, please click <b>Next</b> to consent to participate.</div>"],
             show_clickable_nav: true
         };
         timeline.push(welcome);
