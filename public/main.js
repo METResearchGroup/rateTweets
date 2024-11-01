@@ -11,6 +11,10 @@ const jsPsych = initJsPsych({
             if (data.response) {
                 // initialize all fields with default values (in case participant is able to bypass a question)
                 const defaultData = {
+                    blame_prescriptive: '',
+                    praise_prescriptive: '',
+                    emotion_prescriptive: '',
+                    poli_prescriptive: '',
                     gender: '',
                     age: '',
                     language: '',
@@ -72,6 +76,10 @@ const jsPsych = initJsPsych({
             'response',  // this will include slider responses
             'political_affiliation',  // from pre-survey
             'consented',
+            'blame_prescriptive',
+            'praise_prescriptive',
+            'emotion_prescriptive',
+            'poli_prescriptive',
             'gender', 
             'age', 
             'language', 
@@ -320,7 +328,7 @@ async function setupExperiment() {
                             <img src="${img}" class="stimulus">
                         </div>
                         <p class="slider-question">How <b>likely</b> would you be to post this message to your own social media network?</p>
-                        <p class="progress-text">Image ${currentIndex + 1} of ${participant_images.length}</p>
+                        <p class="progress-text">${currentIndex + 1} of ${participant_images.length}</p>
                     `;
                 },
                 labels: ['1', '2', '3', '4', '5', '6', '7'],
@@ -363,12 +371,21 @@ async function setupExperiment() {
         };
         timeline.push(imageTrials);
 
-        var demo_instruct = {
+        var demo_instruct_1 = {
+            type: jsPsychInstructions,
+            pages: ["<div class='instructions'>Thank you for rating the messages.<br><br>We would now like you to answer a few questions about your perceptions of <b>your own</b> social media networks.<br><br>Please press <b>Next</b> to continue.</div>"],
+            show_clickable_nav: true
+        };
+        timeline.push(demo_instruct_1);
+
+        timeline.push(appropriatenessSurvey);
+
+        var demo_instruct_2  = {
             type: jsPsychInstructions,
             pages: ["<div class='instructions'>Thanks for providing your responses.<br><br>We would now like you to answer a few short demographics questions, after which you will be redirected back to Prolific.<br><br>Please press <b>Next</b> to continue.</div>"],
             show_clickable_nav: true
         };
-        timeline.push(demo_instruct);
+        timeline.push(demo_instruct_2);
 
         timeline.push(demographicsSurvey);
         timeline.push(politicalSurvey);

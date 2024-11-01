@@ -300,11 +300,103 @@ const socialMediaSurvey = {
     }
 }
 
+const appropriatenessSurvey = {
+    type: jsPsychSurveyHtmlForm,
+    preamble: "<h2>Perceptions of your current social media network</h2>",
+    html: `
+        <div class="survey-container">
+            <div class="survey-question">
+                <div>How socially appropriate do you think it is to <b>post a message that blames others</b> in your social media network?</div>
+                <div class="likert-container">
+                    <div class="likert-scale">
+                        ${createLikertOptions('blame_prescriptive', 7)}
+                    </div>
+                    <div class="likert-labels">
+                        <span>1 - Very socially inappropriate</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4 - Completely neutral</span>
+                        <span>5</span>
+                        <span>6</span>
+                        <span>7 - Very socially appropriate</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="survey-container">
+            <div class="survey-question">
+                <div>How socially appropriate do you think it is to <b>post a message that praises others</b> in your social media network?</div>
+                <div class="likert-container">
+                    <div class="likert-scale">
+                        ${createLikertOptions('praise_prescriptive', 7)}
+                    </div>
+                    <div class="likert-labels">
+                        <span>1 - Very socially inappropriate</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4 - Completely neutral</span>
+                        <span>5</span>
+                        <span>6</span>
+                        <span>7 - Very socially appropriate</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="survey-container">
+            <div class="survey-question">
+                <div>How socially appropriate do you think it is to <b>post a message that is emotional</b> in your social media network?</div>
+                <div class="likert-container">
+                    <div class="likert-scale">
+                        ${createLikertOptions('emotion_prescriptive', 7)}
+                    </div>
+                    <div class="likert-labels">
+                        <span>1 - Very socially inappropriate</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4 - Completely neutral</span>
+                        <span>5</span>
+                        <span>6</span>
+                        <span>7 - Very socially appropriate</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="survey-container">
+            <div class="survey-question">
+                <div>How socially appropriate do you think it is to <b>post a message that is political</b> in your social media network?</div>
+                <div class="likert-container">
+                    <div class="likert-scale">
+                        ${createLikertOptions('poli_prescriptive', 7)}
+                    </div>
+                    <div class="likert-labels">
+                        <span>1 - Very socially inappropriate</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4 - Completely neutral</span>
+                        <span>5</span>
+                        <span>6</span>
+                        <span>7 - Very socially appropriate</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
+    button_label: "Next >",
+
+    on_load: function() {
+
+        setupLikertScales();
+
+        window.removeRequiredAttributes();
+    }
+};
+
 // export surveys so they can be imported in the main file
 if (typeof module !== 'undefined') {
     module.exports = {
         demographicsSurvey,
         politicalSurvey,
-        socialMediaSurvey
+        socialMediaSurvey,
+        appropriatenessSurvey
     };
 }
