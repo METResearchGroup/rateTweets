@@ -1,17 +1,47 @@
-// simulate image output for max 385 participants
-// send request to site via node w/ list of 385 unique IDs
-// save output to data folder
-
 const fs = require('fs');
 const path = require('path');
 
-function generateImageList(ParticipantID) {
-    let N = (ParticipantID - 1) % 385; // -1 because we're 0-indexing
-    let images = [];
-    for (let k = 0; k < 20; k++) {
-        let image_index = ((N + 35 * k) % 700);
-        images.push(`img/Slide${image_index + 1}.png`);
+// Import the slide numbers
+const slideNumbers = require('./public/slide_numbers.js');
+
+function generateImageList(ParticipantID, politicalParty) {
+    const demImages = 560;
+    const repImages = 570;
+    
+    let N;
+    let baseFolder;
+    let numImages;
+    let availableSlides;
+    
+    if (politicalParty === 'democrat' || politicalParty === 'lean_democrat') {
+        // N = (ParticipantID - 1) % 200; // 200 dem
+        N = (ParticipantID - 1) % 240; // allow for 40 more dem
+        baseFolder = 'dem';
+        numImages = 28;  // 28 images per democrat
+        availableSlides = slideNumbers.dem;  // globally available from slide_numbers.js
+    } else if (politicalParty === 'republican' || politicalParty === 'lean_republican') {
+        // N = (ParticipantID - 1) % 190; // 190 rep
+        N = (ParticipantID - 1) % 228; // allow for 38 more rep participants
+        baseFolder = 'rep';
+        numImages = 30;  // 30 images per republican
+        availableSlides = slideNumbers.rep;  // globally available from slide_numbers.js
+    } else {
+        console.error('Invalid political party');
+        return [];
     }
+
+    let images = [];
+    for (let k = 0; k < numImages; k++) {
+        let array_index;
+        if (baseFolder === 'dem') {
+            array_index = ((N + 20 * k) % availableSlides.length);
+        } else {
+            array_index = ((N + 19 * k) % availableSlides.length);
+        }
+        const actualSlideNumber = availableSlides[array_index];
+        images.push(`img/${baseFolder}/Slide${actualSlideNumber}.png`);
+    }
+    
     return images;
 }
 
@@ -19,61 +49,114 @@ function runTest() {
     const results = [];
     const imageFrequencies = {};
     
-    for (let participantID = 1; participantID <= 365; participantID++) {
-        const images = generateImageList(participantID);
+    // Simulate Democrat participants (including leaners)
+    // for (let participantID = 1; participantID <= 200; participantID++) {
+    for (let participantID = 1; participantID <= 200; participantID++) {
+        const images = generateImageList(participantID, 'democrat');
         
         results.push({
             participantID,
+            party: 'democrat',
             images: images.join(',')
         });
         
         images.forEach(img => {
-            const imgNumber = img.match(/Slide(\d+)/)[1];
-            imageFrequencies[imgNumber] = (imageFrequencies[imgNumber] || 0) + 1;
+            imageFrequencies[img] = (imageFrequencies[img] || 0) + 1;
         });
     }
 
-    // create CSV header with slide names 1-700
-    let csvContent = 'ParticipantID';
-    for (let i = 1; i <= 700; i++) {
-        csvContent += `,Slide${i}.png`;
+    // Simulate Republican participants (including leaners)
+    // for (let participantID = 201; participantID <= 190; participantID++) {
+    for (let participantID = 1; participantID <= 190; participantID++) {
+        const images = generateImageList(participantID, 'republican');
+        
+        results.push({
+            participantID,
+            party: 'republican',
+            images: images.join(',')
+        });
+        
+        images.forEach(img => {
+            imageFrequencies[img] = (imageFrequencies[img] || 0) + 1;
+        });
     }
+
+    // Create CSV for participant assignments
+    let csvContent = 'ParticipantID,Party';
+    // Add headers for dem images
+    slideNumbers.dem.forEach(num => {
+        csvContent += `,dem/Slide${num}.png`;
+    });
+    // Add headers for rep images
+    slideNumbers.rep.forEach(num => {
+        csvContent += `,rep/Slide${num}.png`;
+    });
     csvContent += '\n';
     
     results.forEach(result => {
         const images = result.images.split(',');
-        const slideNumbers = images.map(img => img.match(/Slide(\d+)/)[1]);
         
-        // create an array of 700 zeros (indexed 0-699 but representing Slides 1-700)
-        const imageArray = new Array(700).fill(0);
+        // Create arrays for both dem and rep images
+        const demArray = new Array(slideNumbers.dem.length).fill(0);
+        const repArray = new Array(slideNumbers.rep.length).fill(0);
         
-        // mark with 1 where images were shown
-        slideNumbers.forEach(num => {
-            imageArray[Number(num) - 1] = 1;  // subtract 1 to convert from slide number to array index
+        // Mark images that were shown
+        images.forEach(img => {
+            const [folder, slideFile] = img.split('/').slice(1);
+            const slideNum = parseInt(slideFile.match(/\d+/)[0]);
+            if (folder === 'dem') {
+                const index = slideNumbers.dem.indexOf(slideNum);
+                if (index !== -1) demArray[index] = 1;
+            } else {
+                const index = slideNumbers.rep.indexOf(slideNum);
+                if (index !== -1) repArray[index] = 1;
+            }
         });
         
-        csvContent += `${result.participantID},${imageArray.join(',')}\n`;
+        csvContent += `${result.participantID},${result.party},${demArray.join(',')},${repArray.join(',')}\n`;
     });
     
-    let frequencyCsvContent = 'image_shown,Frequency\n';  // changed header
+    // Create frequency CSV
+    let frequencyCsvContent = 'image_path,Frequency\n';
     Object.entries(imageFrequencies)
-        .sort((a, b) => Number(a[0]) - Number(b[0]))
-        .forEach(([slide, freq]) => {
-            frequencyCsvContent += `Slide${slide}.png,${freq}\n`;  // added .png to slide names
+        .sort(([a], [b]) => a.localeCompare(b))
+        .forEach(([img, freq]) => {
+            frequencyCsvContent += `${img},${freq}\n`;
         });
     
+    if (!fs.existsSync('test_data')) {
+        fs.mkdirSync('test_data');
+    }
+
     fs.writeFileSync('test_data/participant_image_assignments.csv', csvContent);
     fs.writeFileSync('test_data/image_frequencies.csv', frequencyCsvContent);
 
+    // Log summary statistics
     console.log('Test completed!');
-    console.log(`Total participants simulated: 385`);
-    console.log(`Total unique images used: ${Object.keys(imageFrequencies).length}`);
-    console.log(`Min frequency: ${Math.min(...Object.values(imageFrequencies))}`);
-    console.log(`Max frequency: ${Math.max(...Object.values(imageFrequencies))}`);
-}
+    console.log(`Total participants simulated: ${results.length}`);
+    console.log('Democrat participants:', results.filter(r => r.party === 'democrat').length);
+    console.log('Republican participants:', results.filter(r => r.party === 'republican').length);
+    
+    // Calculate frequencies by party
+    const demFreq = {};
+    const repFreq = {};
+    Object.entries(imageFrequencies).forEach(([img, freq]) => {
+        if (img.includes('dem/')) {
+            demFreq[img] = freq;
+        } else {
+            repFreq[img] = freq;
+        }
+    });
 
-if (!fs.existsSync('test_data')) {
-    fs.mkdirSync('test_data');
+    console.log('\nDemocrat Images:');
+    console.log(`Total unique images: ${Object.keys(demFreq).length}`);
+    console.log(`Min frequency: ${Math.min(...Object.values(demFreq))}`);
+    console.log(`Max frequency: ${Math.max(...Object.values(demFreq))}`);
+    
+    console.log('\nRepublican Images:');
+    console.log(`Total unique images: ${Object.keys(repFreq).length}`);
+    console.log(`Min frequency: ${Math.min(...Object.values(repFreq))}`);
+    console.log(`Max frequency: ${Math.max(...Object.values(repFreq))}`);
 }
 
 runTest();
