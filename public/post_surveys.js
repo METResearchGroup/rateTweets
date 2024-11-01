@@ -108,27 +108,6 @@ const politicalSurvey = {
     html: `
         <div class="survey-container">
             <div class="survey-question">
-                <label for="party">Politically speaking, do you consider yourself:</label>
-                <select id="party" name="party" required>
-                    <option value="" selected disabled>Select an option</option>
-                <option value="democrat">A Democrat</option>
-                <option value="republican">A Republican</option>
-                <option value="other">Other</option>
-                </select>
-            </div>
-        </div>
-        <div id="party-lean" class="survey-container" style="display:none;">
-            <div class="survey-question">
-                <label for="party_lean">If you had to choose, which party do you feel like you lean more closely toward?</label>
-                <select id="party_lean" name="party_lean">
-                    <option value="" selected disabled>Select an option</option>
-                <option value="democrat">A Democrat</option>
-                <option value="republican">A Republican</option>
-                </select>
-            </div>
-        </div>
-        <div class="survey-container">
-            <div class="survey-question">
                 <label for="political_ideology">How would you describe your political ideology?</label>
                 <div class="likert-container">
                     <div class="likert-scale">
@@ -207,17 +186,6 @@ const politicalSurvey = {
     button_label: "Next >",
 
     on_load: function() {
-        // if user selects 'other' for party, show party lean question
-        document.getElementById('party').addEventListener('change', function() {
-            var partyLeanDiv = document.getElementById('party-lean');
-            if (this.value === 'other') {
-                partyLeanDiv.style.display = 'block';
-                document.getElementById('party_lean').required = true;
-            } else {
-                partyLeanDiv.style.display = 'none';
-                document.getElementById('party_lean').required = false;
-            }
-        });
 
         setupLikertScales();
 
