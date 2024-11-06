@@ -15,15 +15,24 @@ os.makedirs(rep_dir, exist_ok=True)
 for _, row in df.iterrows():
     filename = row['filename']
     partisan = row['partisan']
+    label = row['label']
     source_path = os.path.join(source_dir, filename)
     
-    # copy to dem if dem or neutral
-    if partisan in ['Democrat', 'N/A']:
+    # copy to dem if dem
+    if partisan in ['Democrat']:
         dest_path = os.path.join(dem_dir, filename)
         shutil.copy2(source_path, dest_path)
     
-    # copy to rep if rep or neutral
-    if partisan in ['Republican', 'N/A']:
+    # copy to rep if rep
+    if partisan in ['Republican']:
+        dest_path = os.path.join(rep_dir, filename)
+        shutil.copy2(source_path, dest_path)
+
+    if label in ['neutral']:
+        dest_path = os.path.join(dem_dir, filename)
+        shutil.copy2(source_path, dest_path)
+
+    if label in ['neutral']:
         dest_path = os.path.join(rep_dir, filename)
         shutil.copy2(source_path, dest_path)
 

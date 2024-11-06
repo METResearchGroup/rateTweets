@@ -36,7 +36,7 @@ function runTest() {
     const imageFrequencies = {};
     
     // test with more participants than images to show cycling
-    const numParticipantsToTest = 300; // testing with 300 participants to show pattern
+    const numParticipantsToTest = 200; // testing with 400 participants to show pattern
     
     // simulate dem participants
     for (let participantID = 1; participantID <= numParticipantsToTest; participantID++) {

@@ -186,6 +186,29 @@ async function saveExperimentData(csvData) {
 
 // function to generate a list of images for each participant
 function generateImageList(ParticipantID, politicalParty) {
+    // special case for participant 206, or last participant that signs up & there are images that still need to be shown
+    // if (ParticipantID === 206) {
+    //     return [
+    //         'img/dem/Slide194.png',
+    //         'img/dem/Slide217.png',
+    //         'img/dem/Slide219.png',
+    //         'img/dem/Slide228.png',
+    //         'img/dem/Slide241.png',
+    //         'img/dem/Slide245.png',
+    //         'img/dem/Slide271.png',
+    //         'img/dem/Slide307.png',
+    //         'img/dem/Slide319.png',
+    //         'img/dem/Slide346.png',
+    //         'img/dem/Slide39.png',
+    //         'img/dem/Slide466.png',
+    //         'img/dem/Slide483.png',
+    //         'img/dem/Slide524.png',
+    //         'img/dem/Slide69.png',
+    //         'img/dem/Slide73.png',
+    //         'img/dem/Slide78.png'
+    //     ];
+    // }
+
     let baseFolder;
     let numImages;
     let availableSlides;
