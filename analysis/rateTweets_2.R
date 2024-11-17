@@ -164,6 +164,56 @@ for(i in random_order) {
 }
 
 
+# get the mean of poster_rating for partisan = Democrat, Republican, and N/A
+mean_dem <- mean(image_tags_with_raters$poster_rating[image_tags_with_raters$partisan == "Democrat"], na.rm = TRUE)
+mean_rep <- mean(image_tags_with_raters$poster_rating[image_tags_with_raters$partisan == "Republican"], na.rm = TRUE)
+mean_neut <- mean(image_tags_with_raters$poster_rating[image_tags_with_raters$partisan == "N/A"], na.rm = TRUE)
+
+# get the mean of poster_rating for each label
+mean_labels <- image_tags_with_raters %>%
+  group_by(label) %>%
+  summarize(mean_rating = mean(poster_rating, na.rm = TRUE))
+
+mean_labels_rep <- image_tags_with_raters %>%
+  group_by(label) %>%
+  summarize(mean_rating = mean(poster_rating[image_tags_with_raters$partisan == "Republican"], na.rm = TRUE))
+
+mean_labels_dem <- image_tags_with_raters %>%
+  group_by(label) %>%
+  summarize(mean_rating = mean(poster_rating[image_tags_with_raters$partisan == "Democrat"], na.rm = TRUE))
+
+
+
+# mean appropriateness ratings from studies 2, 3, & 3k
+
+s2_data = read.csv("yourfeed_data/qualtrics_s2_MERGED.csv") # dem = e1DXnn, rep = egNJun
+s3_data = read.csv("yourfeed_data/qualtrics_s3_MERGED.csv") # dem = ew5WPg, rep = ea8FMd
+s3k_data = read.csv("yourfeed_data/qualtrics_s3_3k_MERGED.csv") # dem = ewMHzB, rep = eNqCUq
+
+# re-code -3, -2, -1, 0, 1, 2, 3 to 1, 2, 3, 4, 5, 6, 7
+s2_data$blame_prescriptive = recode(s2_data$blame_prescriptive, "-3" = 1, "-2" = 2, "-1" = 3, "0" = 4, "1" = 5, "2" = 6, "3" = 7)
+s2_data$praise_prescriptive = recode(s2_data$praise_prescriptive, "-3" = 1, "-2" = 2, "-1" = 3, "0" = 4, "1" = 5, "2" = 6, "3" = 7)
+s3_data$blame_prescriptive = recode(s3_data$blame_prescriptive, "-3" = 1, "-2" = 2, "-1" = 3, "0" = 4, "1" = 5, "2" = 6, "3" = 7)
+s3_data$praise_prescriptive = recode(s3_data$praise_prescriptive, "-3" = 1, "-2" = 2, "-1" = 3, "0" = 4, "1" = 5, "2" = 6, "3" = 7)
+s3k_data$blame_prescriptive = recode(s3k_data$blame_prescriptive, "-3" = 1, "-2" = 2, "-1" = 3, "0" = 4, "1" = 5, "2" = 6, "3" = 7)
+s3k_data$praise_prescriptive = recode(s3k_data$praise_prescriptive, "-3" = 1, "-2" = 2, "-1" = 3, "0" = 4, "1" = 5, "2" = 6, "3" = 7)
+
+
+# split data into dem and rep
+
+s2_dem <- s2_data %>% filter(experiment_id == "e1DXnn")
+s2_rep <- s2_data %>% filter(experiment_id == "egNJun")
+s3_dem <- s3_data %>% filter(experiment_id == "ew5WPg")
+s3_rep <- s3_data %>% filter(experiment_id == "ea8FMd")
+s3k_dem <- s3k_data %>% filter(experiment_id == "ewMHzB")
+s3k_rep <- s3k_data %>% filter(experiment_id == "eNqCUq")
+
+# get mean of blame_prescriptive and praise_prescriptive for dem and rep
+s2_mean_dem <- mean(s2_dem$poster_rating[image_tags_with_raters$partisan == "Democrat"], na.rm = TRUE)
+
+
+
+
 
 
 
