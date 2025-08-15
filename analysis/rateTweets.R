@@ -230,14 +230,6 @@ pol_images_rated <- pol_means_by_image %>%
   filter(!is.na(high_mean)) # 328 / 400
 
 
-# sub-setting high response to be 3 or above and low response ot be 2 or below
-neut_images_2_rated <- neut_means_by_image_2 %>%
-  filter(!is.na(high_mean)) # 103 / 200
-
-pol_images_2_rated <- pol_means_by_image_2 %>%
-  filter(!is.na(high_mean)) # 336 / 400
-
-
 
 
 ################################################################################
@@ -388,5 +380,13 @@ pol_means_by_image_2 <- pol_image_tags_with_raters_2 %>%
   ) %>%
   select(-high_ratings_numeric, -low_ratings_numeric, -all_ratings)
 
+
+
+# sub-setting high response to be 3 or above and low response ot be 2 or below
+neut_images_2_rated <- neut_means_by_image_2 %>%
+  filter(!is.na(high_mean)) # 103 / 200
+
+pol_images_2_rated <- pol_means_by_image_2 %>%
+  filter(!is.na(high_mean)) # 336 / 400
 
 

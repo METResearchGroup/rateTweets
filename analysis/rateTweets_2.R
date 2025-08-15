@@ -83,17 +83,116 @@ image_ratings_summary <- data %>%
   group_by(image_shown) %>%
   summarize(
     high_raters = paste(unique(prolific_id[response >= 4]), collapse = ", "),
-    high_ratings = paste(response[response >= 4], collapse = ", "),
-    low_raters = paste(unique(prolific_id[response <= 3]), collapse = ", "),
-    low_ratings = paste(response[response <= 3], collapse = ", ")
-    # mean_rating = mean(response, na.rm = TRUE),
-    # high_mean = mean(response[response >= 4], na.rm = TRUE),
-    # low_mean = mean(response[response < 3], na.rm = TRUE)
+    high_ratings = paste(response[response >= 4], collapse = ", ")
+    # low_raters = paste(unique(prolific_id[response <= 3]), collapse = ", "),
+    # low_ratings = paste(response[response <= 3], collapse = ", ")
   )
 
 # merge w/ image_tags
 image_tags_with_raters <- image_tags %>%
   left_join(image_ratings_summary, by = c("filename" = "image_shown"))
+
+
+
+
+
+#################################################################################################
+################### compute prescriptive blame, praise, emotion, poli ratings ###################
+#################################################################################################
+
+
+# df of all precriptive ratings
+prescriptive_ratings <- data %>%
+  select(prolific_id, blame_prescriptive, praise_prescriptive, emotion_prescriptive, poli_prescriptive) %>%
+  distinct()
+
+prescriptive_ratings$blame_prescriptive = recode(prescriptive_ratings$blame_prescriptive, "1" = -3, "2" = -2, "3" = 1, "4" = 0, "5" = 1, "6" = 2, "7" = 3)
+prescriptive_ratings$praise_prescriptive = recode(prescriptive_ratings$praise_prescriptive, "1" = -3, "2" = -2, "3" = 1, "4" = 0, "5" = 1, "6" = 2, "7" = 3)
+prescriptive_ratings$emotion_prescriptive = recode(prescriptive_ratings$emotion_prescriptive, "1" = -3, "2" = -2, "3" = 1, "4" = 0, "5" = 1, "6" = 2, "7" = 3)
+prescriptive_ratings$poli_prescriptive = recode(prescriptive_ratings$poli_prescriptive, "1" = -3, "2" = -2, "3" = 1, "4" = 0, "5" = 1, "6" = 2, "7" = 3)
+
+# function to get ratings for high raters of each image
+get_high_rater_ratings <- function(high_raters_str, ratings_df) {
+  if (is.na(high_raters_str) || high_raters_str == "") return(NA)
+  high_rater_ids <- strsplit(high_raters_str, ", ")[[1]]
+  ratings <- ratings_df %>%
+    filter(prolific_id %in% high_rater_ids) %>%
+    select(-prolific_id)
+  ratings <- ratings[!is.na(ratings)] # Remove NA values
+  if (length(ratings) == 0) return(NA)
+  paste(unlist(ratings), collapse = ", ")
+}
+
+# add the prescriptive rating columns for high raters
+image_tags_with_raters <- image_tags_with_raters %>%
+  mutate(
+    high_rater_blame = mapply(get_high_rater_ratings, high_raters, 
+                              MoreArgs = list(ratings_df = select(prescriptive_ratings, prolific_id, blame_prescriptive))),
+    high_rater_praise = mapply(get_high_rater_ratings, high_raters, 
+                               MoreArgs = list(ratings_df = select(prescriptive_ratings, prolific_id, praise_prescriptive))),
+    high_rater_emotion = mapply(get_high_rater_ratings, high_raters, 
+                                MoreArgs = list(ratings_df = select(prescriptive_ratings, prolific_id, emotion_prescriptive))),
+    high_rater_political = mapply(get_high_rater_ratings, high_raters, 
+                                  MoreArgs = list(ratings_df = select(prescriptive_ratings, prolific_id, poli_prescriptive)))
+  )
+
+# calculate image rating means
+mean_image_tags_with_raters <- image_tags_with_raters %>%
+  mutate(
+    # high_ratings_numeric = lapply(strsplit(high_ratings, ", "), function(x) {
+    #   nums <- as.numeric(x)
+    #   nums[!is.na(nums)]
+    # }),
+    # low_ratings_numeric = lapply(strsplit(low_ratings, ", "), function(x) {
+    #   nums <- as.numeric(x)
+    #   nums[!is.na(nums)]
+    # }),
+    high_rater_blame_numeric = lapply(strsplit(high_rater_blame, ", "), function(x) {
+      nums <- as.numeric(x)
+      nums[!is.na(nums)]
+    }),
+    high_rater_praise_numeric = lapply(strsplit(high_rater_praise, ", "), function(x) {
+      nums <- as.numeric(x)
+      nums[!is.na(nums)]
+    }),
+    high_rater_emotion_numeric = lapply(strsplit(high_rater_emotion, ", "), function(x) {
+      nums <- as.numeric(x)
+      nums[!is.na(nums)]
+    }),
+    high_rater_political_numeric = lapply(strsplit(high_rater_political, ", "), function(x) {
+      nums <- as.numeric(x)
+      nums[!is.na(nums)]
+    }),
+    # high_mean = sapply(high_ratings_numeric, function(x) if(length(x) > 0) mean(x) else NA),
+    # low_mean = sapply(low_ratings_numeric, function(x) if(length(x) > 0) mean(x) else NA),
+    # all_ratings = Map(c, high_ratings_numeric, low_ratings_numeric),
+    # mean_rating = sapply(all_ratings, function(x) if(length(x) > 0) mean(x) else NA)
+    high_rater_blame_mean = sapply(high_rater_blame_numeric, function(x) if(length(x) > 0) mean(x) else NA),
+    high_rater_praise_mean = sapply(high_rater_praise_numeric, function(x) if(length(x) > 0) mean(x) else NA),
+    high_rater_emotion_mean = sapply(high_rater_emotion_numeric, function(x) if(length(x) > 0) mean(x) else NA),
+    high_rater_political_mean = sapply(high_rater_political_numeric, function(x) if(length(x) > 0) mean(x) else NA)
+  ) %>%
+  # select(-high_ratings_numeric, -low_ratings_numeric, -all_ratings)
+  select(-high_rater_blame_numeric, -high_rater_praise_numeric, -high_rater_emotion_numeric, -high_rater_political_numeric)
+
+
+# compute the mean of the high_rater_blame_mean column
+blame_mean = mean(mean_image_tags_with_raters$high_rater_blame_mean, na.rm = TRUE)
+praise_mean = mean(mean_image_tags_with_raters$high_rater_praise_mean, na.rm = TRUE)
+emotion_mean = mean(mean_image_tags_with_raters$high_rater_emotion_mean, na.rm = TRUE)
+political_mean = mean(mean_image_tags_with_raters$high_rater_political_mean, na.rm = TRUE)
+
+print(blame_mean)
+print(praise_mean)
+print(emotion_mean)
+print(political_mean)
+
+
+
+##################################################################
+############# OLD image sorting w/ sample & replace ##############
+##################################################################
+
 
 
 # for a given image, get all users who rated 6-7
@@ -163,6 +262,12 @@ for(i in random_order) {
   }
 }
 
+# count the NA values in image_tags_with_raters$poster_rating
+sum(is.na(image_tags_with_raters$poster_rating)) # 243
+
+# create a data frame of the images that did not get a likely poster
+no_poster <- image_tags_with_raters[is.na(image_tags_with_raters$poster_rating),]
+
 
 # get the mean of poster_rating for partisan = Democrat, Republican, and N/A
 mean_dem <- mean(image_tags_with_raters$poster_rating[image_tags_with_raters$partisan == "Democrat"], na.rm = TRUE)
@@ -200,7 +305,6 @@ s3k_data$praise_prescriptive = recode(s3k_data$praise_prescriptive, "-3" = 1, "-
 
 
 # split data into dem and rep
-
 s2_dem <- s2_data %>% filter(experiment_id == "e1DXnn")
 s2_rep <- s2_data %>% filter(experiment_id == "egNJun")
 s3_dem <- s3_data %>% filter(experiment_id == "ew5WPg")
@@ -210,9 +314,6 @@ s3k_rep <- s3k_data %>% filter(experiment_id == "eNqCUq")
 
 # get mean of blame_prescriptive and praise_prescriptive for dem and rep
 s2_mean_dem <- mean(s2_dem$poster_rating[image_tags_with_raters$partisan == "Democrat"], na.rm = TRUE)
-
-
-
 
 
 
