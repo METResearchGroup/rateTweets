@@ -63,24 +63,18 @@ var jsPsychSocialMediaFeed = (function (jspsych) {
           <div class="feed-content" id="feed-content">
             ${trial.images.map((img, index) => `
               <div class="feed-post" data-image="${img}" data-index="${index}">
-                <div class="post-header">
-                  <div class="user-info">
-                    <div class="avatar"></div>
-                    <span class="username">User_${String(index + 1).padStart(3, '0')}</span>
-                  </div>
-                  <div class="post-actions">
-                    <button class="like-btn" data-index="${index}" onclick="toggleLike(${index})">
-                      <span class="like-icon">♡</span>
-                      <span class="like-count">0</span>
-                    </button>
-                    <button class="share-btn" data-index="${index}" onclick="toggleShare(${index})">
-                      <span class="share-icon">↗</span>
-                      <span class="share-text">Share</span>
-                    </button>
-                  </div>
-                </div>
                 <div class="post-content">
                   <img src="${img}" alt="Post content" class="post-image">
+                </div>
+                <div class="post-actions" style="display: flex; justify-content: flex-end; padding: 15px; border-top: 1px solid #f1f3f4;">
+                  <button class="like-btn" data-index="${index}" onclick="toggleLike(${index})">
+                    <span class="like-icon">♡</span>
+                    <span class="like-count">0</span>
+                  </button>
+                  <button class="share-btn" data-index="${index}" onclick="toggleShare(${index})">
+                    <span class="share-icon">↗</span>
+                    <span class="share-text">Share</span>
+                  </button>
                 </div>
               </div>
             `).join('')}
