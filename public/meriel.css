@@ -415,13 +415,21 @@ ul {
     background: #e9ecef;
 }
 
+.like-btn:hover .like-icon {
+    color: #e74c3c !important;
+}
+
 .share-btn {
-    background: #3498db;
-    color: white;
+    background: #f8f9fa;
+    color: #333;
 }
 
 .share-btn:hover {
-    background: #2980b9;
+    background: #e9ecef;
+}
+
+.share-btn:hover .share-icon {
+    color: #27ae60 !important;
 }
 
 .post-content {
@@ -477,3 +485,46 @@ ul {
 .feed-content::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
 }
+
+
+
+
+/* === Retweet-style inline SVG support === */
+.post-actions .icon {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+  }
+  
+  /* active states (JS toggles these classes) */
+  .like-active { color: #e74c3c; }      /* heart red */
+  .retweet-active { color: #27ae60; }   /* retweet green */
+  
+  /* smooth color change for icon and counts */
+  .post-actions .icon,
+  .post-actions .like-count,
+  .post-actions .share-count {
+    transition: color 120ms ease;
+  }
+  
+  /* a tiny visual alignment tweak for the SVG */
+  .share-btn .share-icon { vertical-align: -2px; }
+
+
+
+
+
+  /* === Heart SVG styling (keeps size identical in both states) === */
+  .like-btn .like-icon .heart {
+    fill: none;             /* outline when inactive */
+    stroke: currentColor;
+    stroke-width: 2;
+  }
+  
+  .like-active .like-icon .heart {
+    fill: currentColor;     /* filled when active */
+    stroke: none;           /* Twitter heart has no stroke when filled */
+  }
+  
+  /* optional: ensure buttons don't squish text/icons on click */
+  .like-btn, .share-btn { line-height: 1; }

@@ -41,6 +41,10 @@ var jsPsychSocialMediaFeed = (function (jspsych) {
       },
       scroll_to_bottom: {
         type: jspsych.ParameterType.BOOL
+      },
+      feed_sources: {
+        type: jspsych.ParameterType.ARRAY,
+        array: true
       }
     }
   };
@@ -67,14 +71,25 @@ var jsPsychSocialMediaFeed = (function (jspsych) {
                   <img src="${img}" alt="Post content" class="post-image">
                 </div>
                 <div class="post-actions" style="display: flex; justify-content: flex-end; padding: 15px; border-top: 1px solid #f1f3f4;">
-                  <button class="like-btn" data-index="${index}" onclick="toggleLike(${index})">
-                    <span class="like-icon">♡</span>
-                    <span class="like-count">0</span>
-                  </button>
-                  <button class="share-btn" data-index="${index}" onclick="toggleShare(${index})">
-                    <span class="share-icon">↗</span>
-                    <span class="share-text">Share</span>
-                  </button>
+                <button class="like-btn" data-index="${index}" onclick="toggleLike(${index})" aria-pressed="false" aria-label="Like">
+                  <svg class="icon like-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path class="heart" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                        2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 
+                        14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 
+                        11.54L12 21.35z"/>
+                  </svg>
+                  <span class="like-count">0</span>
+                </button>
+                <button class="share-btn" data-index="${index}" onclick="toggleShare(${index})" aria-pressed="false" aria-label="Repost">
+                  <svg class="icon share-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <!-- Two bent arrows, stroke-only; uses currentColor -->
+                    <path d="M16 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M20 7H8a4 4 0 0 0-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 21l-4-4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M4 17h12a4 4 0 0 0 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="share-count">0</span>
+                </button>
                 </div>
               </div>
             `).join('')}
@@ -84,9 +99,8 @@ var jsPsychSocialMediaFeed = (function (jspsych) {
           </div>
         </div>
       `;
-
       display_element.innerHTML = feedHTML;
-
+      
       // Initialize like/share tracking
       var likeStates = new Array(trial.images.length).fill(false);
       var shareStates = new Array(trial.images.length).fill(false);
@@ -96,33 +110,32 @@ var jsPsychSocialMediaFeed = (function (jspsych) {
       window.toggleLike = function(index) {
         likeStates[index] = !likeStates[index];
         var btn = document.querySelector(`[data-index="${index}"].like-btn`);
-        var icon = btn.querySelector('.like-icon');
         var count = btn.querySelector('.like-count');
-        
+      
         if (likeStates[index]) {
-          icon.textContent = '♥';
-          icon.style.color = '#e74c3c';
+          btn.classList.add('like-active');
           count.textContent = parseInt(count.textContent) + 1;
+          btn.setAttribute('aria-pressed', 'true');
         } else {
-          icon.textContent = '♡';
-          icon.style.color = '#333';
-          count.textContent = parseInt(count.textContent) - 1;
+          btn.classList.remove('like-active');
+          count.textContent = Math.max(0, parseInt(count.textContent) - 1);
+          btn.setAttribute('aria-pressed', 'false');
         }
       };
 
       window.toggleShare = function(index) {
         shareStates[index] = !shareStates[index];
         var btn = document.querySelector(`[data-index="${index}"].share-btn`);
-        var text = btn.querySelector('.share-text');
-        
+        var count = btn.querySelector('.share-count');
+      
         if (shareStates[index]) {
-          text.textContent = 'Shared';
-          btn.style.backgroundColor = '#27ae60';
-          btn.style.color = 'white';
+          btn.classList.add('retweet-active');              // <-- color via CSS (affects SVG stroke)
+          count.textContent = parseInt(count.textContent) + 1;
+          btn.setAttribute('aria-pressed', 'true');
         } else {
-          text.textContent = 'Share';
-          btn.style.backgroundColor = '#3498db';
-          btn.style.color = 'white';
+          btn.classList.remove('retweet-active');
+          count.textContent = Math.max(0, parseInt(count.textContent) - 1);
+          btn.setAttribute('aria-pressed', 'false');
         }
       };
 
@@ -145,6 +158,17 @@ var jsPsychSocialMediaFeed = (function (jspsych) {
 
       // Continue button handler
       continueBtn.addEventListener('click', function() {
+        // Get feed sources from global variable (if available)
+        var feedSources = [];
+        if (window.currentFeedSourceMap) {
+          feedSources = trial.images.map(img => window.currentFeedSourceMap[img] || '');
+          // Clean up the global variable
+          delete window.currentFeedSourceMap;
+        } else {
+          // Default to empty strings if no source map available
+          feedSources = new Array(trial.images.length).fill('');
+        }
+        
         // Clean up global functions
         delete window.toggleLike;
         delete window.toggleShare;
@@ -156,7 +180,8 @@ var jsPsychSocialMediaFeed = (function (jspsych) {
           share_states: shareStates,
           liked_images: trial.images.filter((_, i) => likeStates[i]),
           shared_images: trial.images.filter((_, i) => shareStates[i]),
-          scroll_to_bottom: scrollToBottom
+          scroll_to_bottom: scrollToBottom,
+          feed_sources: feedSources
         });
       });
 
