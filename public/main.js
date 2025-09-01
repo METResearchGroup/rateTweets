@@ -196,8 +196,8 @@ const jsPsych = initJsPsych({
 });
 
 // API gateway URLs
-const GET_PARTICIPANT_ID_URL = 'https://n2w6sd413g.execute-api.us-east-2.amazonaws.com/get-participant-id';
-const SAVE_DATA_URL = 'https://n2w6sd413g.execute-api.us-east-2.amazonaws.com/save-jspsych-data';
+const GET_PARTICIPANT_ID_URL = 'https://76mck84wq2.execute-api.us-east-2.amazonaws.com/get-participant-id';
+const SAVE_DATA_URL = 'https://76mck84wq2.execute-api.us-east-2.amazonaws.com/save-jspsych-data';
 
 // function to get participant ID
 async function getParticipantId(prolificId, politicalAffiliation) {
