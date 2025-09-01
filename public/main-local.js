@@ -81,7 +81,8 @@ const jsPsych = initJsPsych({
                     const flattenedTrial = {
                         ...trial, // Copy all original trial data
                         image_shown: fileName,
-                        image_category: getImageCategory(fileName), // Add this line
+                        image_category: getImageCategory(fileName),
+                        feed_source: trial.feed_sources ? trial.feed_sources[index] : '',
                         like_state: trial.like_states ? trial.like_states[index] : false,
                         share_state: trial.share_states ? trial.share_states[index] : false,
                         image_index: index + 1,
@@ -94,6 +95,7 @@ const jsPsych = initJsPsych({
                     delete flattenedTrial.share_states;
                     delete flattenedTrial.liked_images;
                     delete flattenedTrial.shared_images;
+                    delete flattenedTrial.feed_sources;
                     
                     flattenedTrials.push(flattenedTrial);
                 });
@@ -134,6 +136,7 @@ const jsPsych = initJsPsych({
             'trial_index', 
             'image_shown',
             'image_category',
+            'feed_source',
             'like_state',
             'share_state',
             'image_index',
@@ -455,11 +458,12 @@ function logCategoryProportions(images, feedName) {
 
 
 // Function to select images for the second feed based on first feed interactions
-function selectPersonalizedSecondFeed(participantId, firstFeedData) {
-    // Algorithm accuracy parameter - 90% personalized, 10% random noise
-    const ALGORITHM_ACCURACY = 0.90;
+function selectPersonalizedSecondFeed(participantId, firstFeedData, politicalAffiliation) {
+    // Algorithm accuracy parameter - 95% personalized, 5% random noise
+    const ALGORITHM_ACCURACY = 0.95;
     
     console.log('=== Second Feed Selection Process ===');
+    console.log('Political affiliation:', politicalAffiliation);
     
     // Get images shown in first feed
     const seenImages = firstFeedData.images_shown || [];
@@ -521,10 +525,10 @@ function selectPersonalizedSecondFeed(participantId, firstFeedData) {
             
             console.log(`${category}: ${count} interactions (${(proportion*100).toFixed(1)}%) -> ${targetPersonalizedCount} target personalized images`);
             
-            // Apply 90/10 algorithm accuracy - some selections will be random instead of personalized
+            // Apply 95/5 algorithm accuracy - some selections will be random instead of personalized
             for (let i = 0; i < targetPersonalizedCount; i++) {
                 if (Math.random() < ALGORITHM_ACCURACY) {
-                    // 90% chance: Select from the preferred category (personalized)
+                    // 95% chance: Select from the preferred category (personalized)
                     const categoryImages = availableByCategory[category] || [];
                     if (categoryImages.length > 0) {
                         const shuffled = categoryImages.sort(() => Math.random() - 0.5);
@@ -539,7 +543,7 @@ function selectPersonalizedSecondFeed(participantId, firstFeedData) {
                         }
                     }
                 } else {
-                    // 10% chance: Select randomly from any category (algorithm "mistake")
+                    // 5% chance: Select randomly from any category (algorithm "mistake")
                     const allAvailable = Object.values(availableByCategory).flat();
                     const randomlyAvailable = allAvailable.filter(img => !personalizedImages.includes(img));
                     if (randomlyAvailable.length > 0) {
@@ -572,11 +576,65 @@ function selectPersonalizedSecondFeed(participantId, firstFeedData) {
         personalizedImages.push(...shuffled.slice(0, remainingPersonalized));
     }
     
-    // Select community images (50 images) - random from remaining unseen
+    // Select community images (50 images) - from political affiliation-specific directory
     const communityImages = [];
-    const remainingForCommunity = allAvailableImages.filter(img => !personalizedImages.includes(img));
-    const shuffledCommunity = remainingForCommunity.sort(() => Math.random() - 0.5);
+    
+    // Determine which directory to use based on political affiliation
+    let communityDirectory;
+    if (politicalAffiliation === 'democrat' || politicalAffiliation === 'lean_democrat') {
+        communityDirectory = 'img/stim_set_top_100_like_share_dem';
+    } else if (politicalAffiliation === 'republican' || politicalAffiliation === 'lean_republican') {
+        communityDirectory = 'img/stim_set_top_100_like_share_rep';
+    } else {
+        // Fallback to dem directory if affiliation is unclear
+        communityDirectory = 'img/stim_set_top_100_like_share_dem';
+        console.log('Warning: Unknown political affiliation, defaulting to dem directory');
+    }
+    
+    console.log('Using community directory:', communityDirectory);
+    
+    // Define the actual slide numbers in each directory
+    // Note: These need to match the actual files in your directories
+    let communitySlideNumbers;
+    if (politicalAffiliation === 'democrat' || politicalAffiliation === 'lean_democrat') {
+        // Slide numbers in stim_set_top_100_like_share_dem directory
+        communitySlideNumbers = [1, 3, 5, 6, 7, 8, 10, 11, 13, 33, 50, 62, 66, 91, 92, 94, 95, 98, 
+                                 102, 105, 106, 110, 122, 124, 126, 127, 130, 151, 152, 153, 154, 156, 157, 159, 181, 189, 190, 
+                                 220, 221, 241, 242, 243, 244, 245, 248, 253, 271, 272, 276, 277, 278, 279, 280, 283, 
+                                 303, 304, 305, 306, 308, 309, 310, 313, 314, 336, 361, 362, 363, 364, 366, 374, 376, 397, 398, 
+                                 424, 459, 487, 488, 499, 
+                                 512, 514, 516, 517, 519, 542, 543, 546, 549, 554, 572, 573, 574, 578, 579, 580, 581, 587, 
+                                 602, 642, 643, 646
+                                ];
+    } else {
+        // Slide numbers in stim_set_top_100_like_share_rep directory
+        communitySlideNumbers = [21, 23, 24, 28, 29, 58, 59, 81, 83, 85, 86, 87, 88, 89, 
+                                 113, 114, 116, 120, 141, 143, 146, 147, 149, 168, 171, 174, 175, 176, 178, 179, 191, 
+                                 206, 231, 232, 233, 236, 239, 240, 291, 292, 293, 299, 
+                                 300, 313, 314, 321, 323, 324, 351, 354, 356, 357, 358, 360, 381, 
+                                 412, 413, 414, 415, 417, 418, 420, 433, 441, 443, 444, 446, 448, 449, 471, 474, 475, 476, 479, 
+                                 502, 504, 507, 509, 532, 533, 535, 537, 562, 563, 567, 570, 591, 593, 595, 596, 597, 
+                                 602, 604, 608, 633, 642, 643, 645, 646, 692
+                                ];
+    }
+    
+    // Generate list of images from the appropriate directory using actual slide numbers
+    const communityPool = communitySlideNumbers.map(slideNum => `${communityDirectory}/Slide${slideNum}.png`);
+    
+    // Filter out any images that were already shown in first feed or selected for personalization
+    const allSelectedImages = [...seenImages, ...personalizedImages];
+    const availableCommunityImages = communityPool.filter(img => !allSelectedImages.includes(img));
+    
+    console.log('Available community images:', availableCommunityImages.length);
+    
+    // Select 50 random images from available community images
+    const shuffledCommunity = availableCommunityImages.sort(() => Math.random() - 0.5);
     communityImages.push(...shuffledCommunity.slice(0, 50));
+    
+    // Create source mapping for each image
+    const imageSourceMap = {};
+    personalizedImages.forEach(img => imageSourceMap[img] = 'personalized');
+    communityImages.forEach(img => imageSourceMap[img] = 'community');
     
     // Combine and shuffle final selection
     const finalImages = [...personalizedImages, ...communityImages];
@@ -591,7 +649,10 @@ function selectPersonalizedSecondFeed(participantId, firstFeedData) {
     // Log final category analysis
     logCategoryProportions(shuffledFinal, 'Second Feed');
     
-    return shuffledFinal;
+    return {
+        images: shuffledFinal,
+        sourceMap: imageSourceMap
+    };
 }
 
 // ************************************************************************************************************* 
@@ -798,7 +859,15 @@ async function setupExperiment() {
                 // Get data from first feed
                 const firstFeedData = jsPsych.data.get().filter({trial_type: 'social-media-feed'}).last(1).values()[0];
                 
-                return selectPersonalizedSecondFeed(ParticipantID, firstFeedData);
+                // Get political affiliation from stored data
+                const politicalAffiliation = jsPsych.data.get().last(1).values()[0].political_affiliation;
+                
+                const secondFeedResult = selectPersonalizedSecondFeed(ParticipantID, firstFeedData, politicalAffiliation);
+                
+                // Store the source map globally so the plugin can access it
+                window.currentFeedSourceMap = secondFeedResult.sourceMap;
+                
+                return secondFeedResult.images;
             },
             require_scroll_to_bottom: true
         };
