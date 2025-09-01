@@ -113,7 +113,7 @@ function simulateInteractions(images, participantId) {
     return { likedImages, sharedImages };
 }
 
-function selectPersonalizedSecondFeed(participantId, firstFeedImages, interactions) {
+function selectPersonalizedSecondFeed(participantId, firstFeedImages, interactions, politicalAffiliation = 'democrat') {
     // Algorithm accuracy parameter - 90% personalized, 10% random noise
     const ALGORITHM_ACCURACY = 0.90;
     
@@ -205,10 +205,43 @@ function selectPersonalizedSecondFeed(participantId, firstFeedImages, interactio
         personalizedImages.push(...shuffled.slice(0, remainingPersonalized));
     }
     
-    // Select community images (50 images) - random from remaining unseen
+    // Select community images (50 images) - from political affiliation-specific directory
     const communityImages = [];
-    const remainingForCommunity = Object.values(availableByCategory).flat().filter(img => !personalizedImages.includes(img));
-    const shuffledCommunity = remainingForCommunity.sort(() => Math.random() - 0.5);
+    
+    // Determine which directory to use based on political affiliation
+    let communityDirectory;
+    let communitySlideNumbers;
+    if (politicalAffiliation === 'democrat' || politicalAffiliation === 'lean_democrat') {
+        communityDirectory = 'img/stim_set_top_100_like_share_dem';
+        communitySlideNumbers = [1, 3, 5, 6, 7, 8, 10, 11, 13, 33, 50, 62, 66, 91, 92, 94, 95, 98, 
+                                 102, 105, 106, 110, 122, 124, 126, 127, 130, 151, 152, 153, 154, 156, 157, 159, 181, 189, 190, 
+                                 220, 221, 241, 242, 243, 244, 245, 248, 253, 271, 272, 276, 277, 278, 279, 280, 283, 
+                                 303, 304, 305, 306, 308, 309, 310, 313, 314, 336, 361, 362, 363, 364, 366, 374, 376, 397, 398, 
+                                 424, 459, 487, 488, 499, 
+                                 512, 514, 516, 517, 519, 542, 543, 546, 549, 554, 572, 573, 574, 578, 579, 580, 581, 587, 
+                                 602, 642, 643, 646
+                                ];
+    } else {
+        communityDirectory = 'img/stim_set_top_100_like_share_rep';
+        communitySlideNumbers = [21, 23, 24, 28, 29, 58, 59, 81, 83, 85, 86, 87, 88, 89, 
+                                 113, 114, 116, 120, 141, 143, 146, 147, 149, 168, 171, 174, 175, 176, 178, 179, 191, 
+                                 206, 231, 232, 233, 236, 239, 240, 291, 292, 293, 299, 
+                                 300, 313, 314, 321, 323, 324, 351, 354, 356, 357, 358, 360, 381, 
+                                 412, 413, 414, 415, 417, 418, 420, 433, 441, 443, 444, 446, 448, 449, 471, 474, 475, 476, 479, 
+                                 502, 504, 507, 509, 532, 533, 535, 537, 562, 563, 567, 570, 591, 593, 595, 596, 597, 
+                                 602, 604, 608, 633, 642, 643, 645, 646, 692
+                                ];
+    }
+    
+    // Generate list of images from the appropriate directory
+    const communityPool = communitySlideNumbers.map(slideNum => `${communityDirectory}/Slide${slideNum}.png`);
+    
+    // Filter out any images that were already shown in first feed or selected for personalization
+    const allSelectedImages = [...firstFeedImages, ...personalizedImages];
+    const availableCommunityImages = communityPool.filter(img => !allSelectedImages.includes(img));
+    
+    // Select 50 random images from available community images
+    const shuffledCommunity = availableCommunityImages.sort(() => Math.random() - 0.5);
     communityImages.push(...shuffledCommunity.slice(0, 50));
     
     return [...personalizedImages, ...communityImages];
@@ -231,6 +264,9 @@ function runTest() {
     
     // Simulate each participant
     for (let participantID = 1; participantID <= numParticipantsToTest; participantID++) {
+        // Simulate political affiliation (50/50 split for testing)
+        const politicalAffiliation = participantID % 2 === 0 ? 'republican' : 'democrat';
+        
         // First feed - balanced selection
         const firstFeedImages = selectBalancedFirstFeed(participantID);
         
@@ -238,7 +274,7 @@ function runTest() {
         const interactions = simulateInteractions(firstFeedImages, participantID);
         
         // Second feed - personalized based on interactions
-        const secondFeedImages = selectPersonalizedSecondFeed(participantID, firstFeedImages, interactions);
+        const secondFeedImages = selectPersonalizedSecondFeed(participantID, firstFeedImages, interactions, politicalAffiliation);
         
         // Combine all images for this participant
         const allParticipantImages = [...firstFeedImages, ...secondFeedImages];
