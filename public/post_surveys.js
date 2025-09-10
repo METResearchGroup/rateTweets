@@ -5,7 +5,7 @@ const demographicsSurvey = {
     html: `
         <div class="survey-container">
             <div class="survey-question">
-            <label for="gender">To which gender do you mostly identify?</label>
+            <label for="gender" style="font-weight: normal;">To which gender do you mostly identify?</label>
             <select id="gender" name="gender" required>
                 <option value="" selected disabled>Select an option</option>
                 <option value="male">Male</option>
@@ -17,13 +17,13 @@ const demographicsSurvey = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-            <label for="age">How old are you?</label>
+            <label for="age" style="font-weight: normal;">How old are you?</label>
                 <input type="number" id="age" name="age" required min="18" max="120">
             </div>
         </div>          
         <div class="survey-container">
             <div class="survey-question">
-                <label for="language">Is English your first language?</label>
+                <label for="language" style="font-weight: normal;">Is English your first language?</label>
             <select id="language" name="language" required>
                 <option value="" selected disabled>Select an option</option>
                 <option value="yes">Yes</option>
@@ -35,7 +35,7 @@ const demographicsSurvey = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <label for="education">Please indicate your education level</label>
+                <label for="education" style="font-weight: normal;">Please indicate your education level</label>
             <select id="education" name="education" required>
                 <option value="" selected disabled>Select an option</option>
                 <option value="no_school">No school</option>
@@ -50,7 +50,7 @@ const demographicsSurvey = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <label for="employment">Are you currently...?</label>
+                <label for="employment" style="font-weight: normal;">Are you currently...?</label>
             <select id="employment" name="employment" required>
                 <option value="" selected disabled>Select an option</option>
                 <option value="employed">Employed</option>
@@ -108,7 +108,7 @@ const politicalSurvey = {
     html: `
         <div class="survey-container">
             <div class="survey-question">
-                <label for="political_ideology">How would you describe your political ideology?</label>
+                <label for="political_ideology" style="font-weight: normal;">How would you describe your political ideology?</label>
                 <div class="likert-container">
                     <div class="likert-scale">
                         ${createLikertOptions('political_ideology', 7)}
@@ -127,7 +127,7 @@ const politicalSurvey = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <label for="political_follow">Generally speaking, how closely do you follow politics?</label>
+                <label for="political_follow" style="font-weight: normal;">Generally speaking, how closely do you follow politics?</label>
                 <div class="likert-container">
                     <div class="likert-scale">
                         ${createLikertOptions('political_follow', 7)}
@@ -146,7 +146,7 @@ const politicalSurvey = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <label for="rep_id">To what extent do you agree with the following statement: "I identify with the Republican Party"</label>
+                <label for="rep_id" style="font-weight: normal;">To what extent do you agree with the following statement: "<b>I identify with the Republican Party</b>"</label>
                 <div class="likert-container">
                     <div class="likert-scale">
                         ${createLikertOptions('rep_id', 7)}
@@ -165,7 +165,7 @@ const politicalSurvey = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <label for="dem_id">To what extent do you agree with the following statement: "I identify with the Democratic Party"</label>
+                <label for="dem_id" style="font-weight: normal;">To what extent do you agree with the following statement: "<b>I identify with the Democratic Party</b>"</label>
                 <div class="likert-container">
                     <div class="likert-scale">
                         ${createLikertOptions('dem_id', 7)}
@@ -199,7 +199,7 @@ const socialMediaSurvey = {
     html: `
         <div class="survey-container">
             <div class="survey-question">
-                <label for="sm_use">How often do you use social media?</label>
+                <label for="sm_use" style="font-weight: normal;">How often do you use social media?</label>
                 <select id="sm_use" name="sm_use" required>
                 <option value="" selected disabled>Select an option</option>
                 <option value="daily_or_more">Daily or more</option>
@@ -214,7 +214,7 @@ const socialMediaSurvey = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <label for="sm_use_slider">If you use social media daily or more, use the slider to indicate how many times per day you tend to use social media. If you don't use social media daily or more, then leave the slider at 0.</label>
+                <label for="sm_use_slider" style="font-weight: normal;">If you use social media <b>daily or more</b>, use the slider to indicate <b>how many times per day</b> you tend to use social media. If you don't use social media daily or more, then leave the slider at 0.</label>
                 <div class="slider-container">
                     <input type="range" id="sm_use_slider" name="sm_use_slider" min="0" max="100" value="0" step="1">
                     <output for="sm_use_slider" id="sm_use_slider_value">0</output>
@@ -223,7 +223,7 @@ const socialMediaSurvey = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <label for="sm_use_poli">How often do you use social media specifically to <span style="text-decoration: underline;">view or learn about political content?</span></label>
+                <label for="sm_use_poli" style="font-weight: normal;">How often do you use social media specifically to <b>view or learn about political content</b>?</label>
                 <select id="sm_use_poli" name="sm_use_poli" required>
                 <option value="" selected disabled>Select an option</option>
                 <option value="daily_or_more">Daily or more</option>
@@ -238,7 +238,7 @@ const socialMediaSurvey = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <label for="sm_use_poli_slider">If you use social media to <span style="text-decoration: underline;">view or learn about political content daily or more,</span> use the slider to indicate how many times per day you tend to use social media to view or learn about political content. If you don't use social media to view or learn about political content daily or more, then leave the slider at 0.</label>
+                <label for="sm_use_poli_slider" style="font-weight: normal;">If you use social media to <b>view or learn about political content daily or more</b>, use the slider to indicate <b>how many times per day</b> you tend to use social media to view or learn about political content. <b>If you don't</b> use social media to view or learn about political content daily or more, then <b>leave the slider at 0.</b></label>
                 <div class="slider-container">
                     <input type="range" id="sm_use_poli_slider" name="sm_use_poli_slider" min="0" max="100" value="0" step="1">
                     <output for="sm_use_poli_slider" id="sm_use_poli_slider_value">0</output>
@@ -247,7 +247,7 @@ const socialMediaSurvey = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <label for="sm_post_poli">How often do you use social media specifically to <span style="text-decoration: underline;">post or share political content?</span></label>
+                <label for="sm_post_poli" style="font-weight: normal;">How often do you use social media specifically to <b>post or share political content</b>?</label>
                 <select id="sm_post_poli" name="sm_post_poli" required>
                 <option value="" selected disabled>Select an option</option>
                 <option value="daily_or_more">Daily or more</option>
@@ -262,7 +262,7 @@ const socialMediaSurvey = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <label for="sm_post_poli_slider">If you use social media to <span style="text-decoration: underline;">post or share political content</span> daily or more, use the slider to indicate how many times per day you tend to use social media to post or share political content. If you don't use social media to post or sharepolitical content daily or more, then leave the slider at 0.</label>
+                <label for="sm_post_poli_slider" style="font-weight: normal;">If you use social media to <b>post or share political content daily or more</b>, use the slider to indicate <b>how many times per day</b> you tend to use social media to post or share political content. <b>If you don't</b> use social media to post or share political content daily or more, then <b>leave the slider at 0.</b></label>
                 <div class="slider-container">
                     <input type="range" id="sm_post_poli_slider" name="sm_post_poli_slider" min="0" max="100" value="0" step="1">
                     <output for="sm_post_poli_slider" id="sm_post_poli_slider_value">0</output>
@@ -271,7 +271,7 @@ const socialMediaSurvey = {
         </div>  
         <div class="survey-container">
             <div class="survey-question">
-                <label for="share_why">If you share (e.g. retweet, share, repost) content on social media, why do you typically share it (check all that apply)?</label>
+                <label for="share_why" style="font-weight: normal;">If you share (e.g. retweet, share, repost) content on social media, <b>why do you typically share it</b> (check all that apply)?</label>
                 <div class="multi-select-options">
                     <label><input type="checkbox" name="share_why_1" value="see_content"> I want people to see the content</label>
                     <label><input type="checkbox" name="share_why_2" value="make_laugh"> I want to make people laugh</label>
@@ -300,13 +300,13 @@ const socialMediaSurvey = {
     }
 }
 
-const appropriatenessSurvey = {
+const prescriptiveSurvey = {
     type: jsPsychSurveyHtmlForm,
-    preamble: "<h2>Perceptions of your current social media network</h2>",
+    preamble: "<h2 style='font-weight: normal;'>Perceptions of the <b>second</b> social media network you viewed</h2>",
     html: `
         <div class="survey-container">
             <div class="survey-question">
-                <div>How socially appropriate do you think it is to <b>post a message that blames others</b> in your social media network?</div>
+                <div>In the <b>second</b> social media network you viewed, how socially appropriate do you think it is to <b>post a message that blames others</b>?</div>
                 <div class="likert-container">
                     <div class="likert-scale">
                         ${createLikertOptions('blame_prescriptive', 7)}
@@ -325,7 +325,7 @@ const appropriatenessSurvey = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <div>How socially appropriate do you think it is to <b>post a message that praises others</b> in your social media network?</div>
+                <div>In the <b>second</b> social media network you viewed, how socially appropriate do you think it is to <b>post a message that praises others</b>?</div>
                 <div class="likert-container">
                     <div class="likert-scale">
                         ${createLikertOptions('praise_prescriptive', 7)}
@@ -344,7 +344,7 @@ const appropriatenessSurvey = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <div>How socially appropriate do you think it is to <b>post a message that is emotional</b> in your social media network?</div>
+                <div>In the <b>second</b> social media network you viewed, how socially appropriate do you think it is to <b>post a message that is emotional</b>?</div>
                 <div class="likert-container">
                     <div class="likert-scale">
                         ${createLikertOptions('emotion_prescriptive', 7)}
@@ -363,7 +363,7 @@ const appropriatenessSurvey = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <div>How socially appropriate do you think it is to <b>post a message that is political</b> in your social media network?</div>
+                <div>In the <b>second</b> social media network you viewed, how socially appropriate do you think it is to <b>post a message that is political</b>?</div>
                 <div class="likert-container">
                     <div class="likert-scale">
                         ${createLikertOptions('poli_prescriptive', 7)}
@@ -391,12 +391,216 @@ const appropriatenessSurvey = {
     }
 };
 
+// descriptive survey with slider questions about perceived percentages in the social network
+const descriptiveSurvey = {
+    type: jsPsychSurveyHtmlForm,
+    preamble: "<h2 style='font-weight: normal;'>Perceptions of the <b>second</b> social media network you viewed</h2>",
+    html: `
+        <div class="survey-container" style="margin-bottom: 40px;">
+            <div class="survey-question">
+                <label for="blame_descriptive" style="font-weight: normal;">In the <b>second</b> social media network you viewed, what percentage of people were <b>posting a message that blamed others</b>?</label>
+                <div class="slider-container">
+                    <input type="range" id="blame_descriptive" name="blame_descriptive" min="0" max="100" value="50" step="10" required>
+                    <output for="blame_descriptive" id="blame_descriptive_value">50%</output>
+                </div>
+            </div>
+        </div>
+        <div class="survey-container" style="margin-bottom: 40px;">
+            <div class="survey-question">
+                <label for="praise_descriptive" style="font-weight: normal;">In the <b>second</b> social media network you viewed, what percentage of people were <b>posting a message that praised others</b>?</label>
+                <div class="slider-container">
+                    <input type="range" id="praise_descriptive" name="praise_descriptive" min="0" max="100" value="50" step="10" required>
+                    <output for="praise_descriptive" id="praise_descriptive_value">50%</output>
+                </div>
+            </div>
+        </div>
+        <div class="survey-container" style="margin-bottom: 40px;">
+            <div class="survey-question">
+                <label for="emotion_descriptive" style="font-weight: normal;">In the <b>second</b> social media network you viewed, what percentage of people were <b>posting a message that was emotional</b>?</label>
+                <div class="slider-container">
+                    <input type="range" id="emotion_descriptive" name="emotion_descriptive" min="0" max="100" value="50" step="10" required>
+                    <output for="emotion_descriptive" id="emotion_descriptive_value">50%</output>
+                </div>
+            </div>
+        </div>
+        <div class="survey-container">
+            <div class="survey-question">
+                <label for="political_descriptive" style="font-weight: normal;">In the <b>second</b> social media network you viewed, what percentage of people were <b>posting a message that was political</b>?</label>
+                <div class="slider-container">
+                    <input type="range" id="political_descriptive" name="political_descriptive" min="0" max="100" value="50" step="10" required>
+                    <output for="political_descriptive" id="political_descriptive_value">50%</output>
+                </div>
+            </div>
+        </div>
+    `,
+    button_label: "Next >",
+    on_load: function() {
+        const sliders = ['blame_descriptive', 'praise_descriptive', 'emotion_descriptive', 'political_descriptive'];
+        sliders.forEach(sliderId => {
+            const slider = document.getElementById(sliderId);
+            const output = document.getElementById(`${sliderId}_value`);
+            slider.oninput = function() {
+                output.value = this.value + '%';
+            }
+        });
+    }
+};
+
+const prescriptiveSurvey_ownNetwork = {
+    type: jsPsychSurveyHtmlForm,
+    preamble: "<h2 style='font-weight: normal;'>Perceptions of <b>your current</b> social media networks</h2>",
+    html: `
+        <div class="survey-container">
+            <div class="survey-question">
+                <div>In <b>your current</b> social media networks, how socially appropriate do you think it is to <b>post a message that blames others</b>?</div>
+                <div class="likert-container">
+                    <div class="likert-scale">
+                        ${createLikertOptions('blame_prescriptive_ownNetwork', 7)}
+                    </div>
+                    <div class="likert-labels">
+                        <span>1 - Very socially inappropriate</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4 - Completely neutral</span>
+                        <span>5</span>
+                        <span>6</span>
+                        <span>7 - Very socially appropriate</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="survey-container">
+            <div class="survey-question">
+                <div>In <b>your current</b> social media networks, how socially appropriate do you think it is to <b>post a message that praises others</b>?</div>
+                <div class="likert-container">
+                    <div class="likert-scale">
+                        ${createLikertOptions('praise_prescriptive_ownNetwork', 7)}
+                    </div>
+                    <div class="likert-labels">
+                        <span>1 - Very socially inappropriate</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4 - Completely neutral</span>
+                        <span>5</span>
+                        <span>6</span>
+                        <span>7 - Very socially appropriate</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="survey-container">
+            <div class="survey-question">
+                <div>In <b>your current</b> social media networks, how socially appropriate do you think it is to <b>post a message that is emotional</b>?</div>
+                <div class="likert-container">
+                    <div class="likert-scale">
+                        ${createLikertOptions('emotion_prescriptive_ownNetwork', 7)}
+                    </div>
+                    <div class="likert-labels">
+                        <span>1 - Very socially inappropriate</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4 - Completely neutral</span>
+                        <span>5</span>
+                        <span>6</span>
+                        <span>7 - Very socially appropriate</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="survey-container">
+            <div class="survey-question">
+                <div>In <b>your current</b> social media networks, how socially appropriate do you think it is to <b>post a message that is political</b>?</div>
+                <div class="likert-container">
+                    <div class="likert-scale">
+                        ${createLikertOptions('poli_prescriptive_ownNetwork', 7)}
+                    </div>
+                    <div class="likert-labels">
+                        <span>1 - Very socially inappropriate</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4 - Completely neutral</span>
+                        <span>5</span>
+                        <span>6</span>
+                        <span>7 - Very socially appropriate</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
+    button_label: "Next >",
+
+    on_load: function() {
+
+        setupLikertScales();
+
+        // window.removeRequiredAttributes();
+    }
+};
+
+// descriptive survey with slider questions about perceived percentages in the social network
+const descriptiveSurvey_ownNetwork = {
+    type: jsPsychSurveyHtmlForm,
+    preamble: "<h2 style='font-weight: normal;'>Perceptions of <b>your current</b> social media networks</h2>",
+    html: `
+        <div class="survey-container" style="margin-bottom: 40px;">
+            <div class="survey-question">
+                <label for="blame_descriptive_ownNetwork" style="font-weight: normal;">In <b>your current</b> social media networks, what percentage of people typically <b>post messages that blame others</b>?</label>
+                <div class="slider-container">
+                    <input type="range" id="blame_descriptive_ownNetwork" name="blame_descriptive_ownNetwork" min="0" max="100" value="50" step="10" required>
+                    <output for="blame_descriptive_ownNetwork" id="blame_descriptive_ownNetwork_value">50%</output>
+                </div>
+            </div>
+        </div>
+        <div class="survey-container" style="margin-bottom: 40px;">
+            <div class="survey-question">
+                <label for="praise_descriptive_ownNetwork" style="font-weight: normal;">In <b>your current</b> social media networks, what percentage of people typically <b>post messages that praise others</b>?</label>
+                <div class="slider-container">
+                    <input type="range" id="praise_descriptive_ownNetwork" name="praise_descriptive_ownNetwork" min="0" max="100" value="50" step="10" required>
+                    <output for="praise_descriptive_ownNetwork" id="praise_descriptive_ownNetwork_value">50%</output>
+                </div>
+            </div>
+        </div>
+        <div class="survey-container" style="margin-bottom: 40px;">
+            <div class="survey-question">
+                <label for="emotion_descriptive_ownNetwork" style="font-weight: normal;">In <b>your current</b> social media networks, what percentage of people typically <b>post messages that are emotional</b>?</label>
+                <div class="slider-container">
+                    <input type="range" id="emotion_descriptive_ownNetwork" name="emotion_descriptive_ownNetwork" min="0" max="100" value="50" step="10" required>
+                    <output for="emotion_descriptive_ownNetwork" id="emotion_descriptive_ownNetwork_value">50%</output>
+                </div>
+            </div>
+        </div>
+        <div class="survey-container">
+            <div class="survey-question">
+                <label for="political_descriptive_ownNetwork" style="font-weight: normal;">In <b>your current</b> social media networks, what percentage of people typically <b>post messages that are political</b>?</label>
+                <div class="slider-container">
+                    <input type="range" id="political_descriptive_ownNetwork" name="political_descriptive_ownNetwork" min="0" max="100" value="50" step="10" required>
+                    <output for="political_descriptive_ownNetwork" id="political_descriptive_ownNetwork_value">50%</output>
+                </div>
+            </div>
+        </div>
+    `,
+    button_label: "Next >",
+    on_load: function() {
+        const sliders = ['blame_descriptive_ownNetwork', 'praise_descriptive_ownNetwork', 'emotion_descriptive_ownNetwork', 'political_descriptive_ownNetwork'];
+        sliders.forEach(sliderId => {
+            const slider = document.getElementById(sliderId);
+            const output = document.getElementById(`${sliderId}_value`);
+            slider.oninput = function() {
+                output.value = this.value + '%';
+            }
+        });
+    }
+};
+
 // export surveys so they can be imported in the main file
 if (typeof module !== 'undefined') {
     module.exports = {
         demographicsSurvey,
         politicalSurvey,
         socialMediaSurvey,
-        appropriatenessSurvey
+        prescriptiveSurvey,
+        descriptiveSurvey,
+        prescriptiveSurvey_ownNetwork,
+        descriptiveSurvey_ownNetwork,
     };
 }
