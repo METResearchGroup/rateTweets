@@ -831,7 +831,7 @@ async function setupExperiment() {
         // Instructions before first social media feed
         var preFirstFeedInstructions = {
             type: jsPsychInstructions,
-            pages: ["<div class='instructions'>Great! Now you're ready to begin the main task.<br><br>You will see a social media feed with posts from various users. As you scroll through the feed, you can <b>like</b> and <b>share</b> posts that interest you by clicking the respective buttons.<br><br>Please scroll through the entire feed at your own pace. You must scroll to the bottom to continue.<br><br>Press <b>Next</b> to start viewing the feed.</div>"],
+            pages: ["<div class='instructions'>Great! Now you're ready to begin the main task.<br><br>You will see a social media feed with posts from various users. As you scroll through the feed, your job is simply to <b>like</b> and <b>share</b> posts that you find interesting by clicking the like or share buttons.<br><br>Please scroll through the entire feed at your own pace. You will be able to scroll back up if you'd like to re-read a post.<br><br>Press <b>Next</b> to start viewing the feed.</div>"],
             show_clickable_nav: true
         };
         timeline.push(preFirstFeedInstructions);
@@ -950,7 +950,7 @@ async function setupExperiment() {
         // Instructions between sections 1 & 2
         var betweenSectionsInstructions = {
             type: jsPsychInstructions,
-            pages: ["<div class='instructions'>Great! You've completed the first section.<br><br>Now you'll see another social media feed. Just like before, you can <b>like</b> and <b>share</b> posts that interest you.<br><br>Please scroll through the entire feed. Press <b>Next</b> to view the feed.</div>"],
+            pages: ["<div class='instructions'>Great! You've completed the first section.<br><br>Now you'll see another social media feed. Just like before, you can <b>like</b> and <b>share</b> posts that interest you. <br><br>After you finish scrolling through the second feed, we will ask you some questions about its content.<br><br>Press <b>Next</b> to view the feed.</div>"],
             show_clickable_nav: true
         };
         timeline.push(betweenSectionsInstructions);
@@ -1007,7 +1007,7 @@ async function setupExperiment() {
 
         var demo_instruct_2 = {
             type: jsPsychInstructions,
-            pages: ["<div class='instructions'>Now that you've judged the social media feeds from our experiment, we'd like to ask you some questions about <b>your own social media networks</b>.<br><br>When answering these questions, think about the experiences you've had while scrolling on the social media platforms you use most frequently, such as X, Instagram, Bluesky, etc.<br><br>Please press <b>Next</b> to continue.</div>"],
+            pages: ["<div class='instructions'>Now that you've judged the social media feeds from our experiment, we'd like to ask you some questions about <b>your own social media networks</b>.<br><br>When answering these questions, think about the experience you've had while scrolling on the social media platforms you use most frequently, also keeping in mind that our experiment feeds are meant to simulate real social media feeds.<br><br>Please press <b>Next</b> to continue.</div>"],
             show_clickable_nav: true
         };
         timeline.push(demo_instruct_2);

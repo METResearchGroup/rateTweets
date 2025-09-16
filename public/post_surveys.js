@@ -302,7 +302,7 @@ const socialMediaSurvey = {
 
 const prescriptiveSurvey = {
     type: jsPsychSurveyHtmlForm,
-    preamble: "<h2 style='font-weight: normal;'>Perceptions of the <b>second</b> social media network you viewed</h2>",
+    preamble: "<h2 style='font-weight: normal;'>Perceptions of the <b>second</b> social media network (feed) you viewed</h2>",
     html: `
         <div class="survey-container">
             <div class="survey-question">
@@ -394,14 +394,20 @@ const prescriptiveSurvey = {
 // descriptive survey with slider questions about perceived percentages in the social network
 const descriptiveSurvey = {
     type: jsPsychSurveyHtmlForm,
-    preamble: "<h2 style='font-weight: normal;'>Perceptions of the <b>second</b> social media network you viewed</h2>",
+    preamble: "<h2 style='font-weight: normal;'>Perceptions of the <b>second</b> social media network (feed) you viewed</h2>",
     html: `
         <div class="survey-container" style="margin-bottom: 40px;">
             <div class="survey-question">
                 <label for="blame_descriptive" style="font-weight: normal;">In the <b>second</b> social media network you viewed, what percentage of people were <b>posting a message that blamed others</b>?</label>
                 <div class="slider-container">
-                    <input type="range" id="blame_descriptive" name="blame_descriptive" min="0" max="100" value="50" step="10" required>
-                    <output for="blame_descriptive" id="blame_descriptive_value">50%</output>
+                    <div class="slider-labels">
+                        <span>0%</span>
+                        <span>100%</span>
+                    </div>
+                    <input type="range" id="blame_descriptive" name="blame_descriptive" min="0" max="100" value="50" step="1" required>
+                    <div class="slider-value">
+                        <output for="blame_descriptive" id="blame_descriptive_value">50%</output>
+                    </div>
                 </div>
             </div>
         </div>
@@ -409,8 +415,14 @@ const descriptiveSurvey = {
             <div class="survey-question">
                 <label for="praise_descriptive" style="font-weight: normal;">In the <b>second</b> social media network you viewed, what percentage of people were <b>posting a message that praised others</b>?</label>
                 <div class="slider-container">
-                    <input type="range" id="praise_descriptive" name="praise_descriptive" min="0" max="100" value="50" step="10" required>
-                    <output for="praise_descriptive" id="praise_descriptive_value">50%</output>
+                    <div class="slider-labels">
+                        <span>0%</span>
+                        <span>100%</span>
+                    </div>
+                    <input type="range" id="praise_descriptive" name="praise_descriptive" min="0" max="100" value="50" step="1" required>
+                    <div class="slider-value">
+                        <output for="praise_descriptive" id="praise_descriptive_value">50%</output>
+                    </div>
                 </div>
             </div>
         </div>
@@ -418,8 +430,14 @@ const descriptiveSurvey = {
             <div class="survey-question">
                 <label for="emotion_descriptive" style="font-weight: normal;">In the <b>second</b> social media network you viewed, what percentage of people were <b>posting a message that was emotional</b>?</label>
                 <div class="slider-container">
-                    <input type="range" id="emotion_descriptive" name="emotion_descriptive" min="0" max="100" value="50" step="10" required>
-                    <output for="emotion_descriptive" id="emotion_descriptive_value">50%</output>
+                    <div class="slider-labels">
+                        <span>0%</span>
+                        <span>100%</span>
+                    </div>
+                    <input type="range" id="emotion_descriptive" name="emotion_descriptive" min="0" max="100" value="50" step="1" required>
+                    <div class="slider-value">
+                        <output for="emotion_descriptive" id="emotion_descriptive_value">50%</output>
+                    </div>
                 </div>
             </div>
         </div>
@@ -427,8 +445,14 @@ const descriptiveSurvey = {
             <div class="survey-question">
                 <label for="political_descriptive" style="font-weight: normal;">In the <b>second</b> social media network you viewed, what percentage of people were <b>posting a message that was political</b>?</label>
                 <div class="slider-container">
-                    <input type="range" id="political_descriptive" name="political_descriptive" min="0" max="100" value="50" step="10" required>
-                    <output for="political_descriptive" id="political_descriptive_value">50%</output>
+                    <div class="slider-labels">
+                        <span>0%</span>
+                        <span>100%</span>
+                    </div>
+                    <input type="range" id="political_descriptive" name="political_descriptive" min="0" max="100" value="50" step="1" required>
+                    <div class="slider-value">
+                        <output for="political_descriptive" id="political_descriptive_value">50%</output>
+                    </div>
                 </div>
             </div>
         </div>
@@ -448,11 +472,11 @@ const descriptiveSurvey = {
 
 const prescriptiveSurvey_ownNetwork = {
     type: jsPsychSurveyHtmlForm,
-    preamble: "<h2 style='font-weight: normal;'>Perceptions of <b>your current</b> social media networks</h2>",
+    preamble: "<h2 style='font-weight: normal;'>Perceptions of <b>your own</b> social media networks</h2>",
     html: `
         <div class="survey-container">
             <div class="survey-question">
-                <div>In <b>your current</b> social media networks, how socially appropriate do you think it is to <b>post a message that blames others</b>?</div>
+                <div>In your social media networks, how socially appropriate do you think it is to <b>post a message that blames others</b>?</div>
                 <div class="likert-container">
                     <div class="likert-scale">
                         ${createLikertOptions('blame_prescriptive_ownNetwork', 7)}
@@ -471,7 +495,7 @@ const prescriptiveSurvey_ownNetwork = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <div>In <b>your current</b> social media networks, how socially appropriate do you think it is to <b>post a message that praises others</b>?</div>
+                <div>In your social media networks, how socially appropriate do you think it is to <b>post a message that praises others</b>?</div>
                 <div class="likert-container">
                     <div class="likert-scale">
                         ${createLikertOptions('praise_prescriptive_ownNetwork', 7)}
@@ -490,7 +514,7 @@ const prescriptiveSurvey_ownNetwork = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <div>In <b>your current</b> social media networks, how socially appropriate do you think it is to <b>post a message that is emotional</b>?</div>
+                <div>In your social media networks, how socially appropriate do you think it is to <b>post a message that is emotional</b>?</div>
                 <div class="likert-container">
                     <div class="likert-scale">
                         ${createLikertOptions('emotion_prescriptive_ownNetwork', 7)}
@@ -509,7 +533,7 @@ const prescriptiveSurvey_ownNetwork = {
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <div>In <b>your current</b> social media networks, how socially appropriate do you think it is to <b>post a message that is political</b>?</div>
+                <div>In your social media networks, how socially appropriate do you think it is to <b>post a message that is political</b>?</div>
                 <div class="likert-container">
                     <div class="likert-scale">
                         ${createLikertOptions('poli_prescriptive_ownNetwork', 7)}
@@ -540,41 +564,65 @@ const prescriptiveSurvey_ownNetwork = {
 // descriptive survey with slider questions about perceived percentages in the social network
 const descriptiveSurvey_ownNetwork = {
     type: jsPsychSurveyHtmlForm,
-    preamble: "<h2 style='font-weight: normal;'>Perceptions of <b>your current</b> social media networks</h2>",
+    preamble: "<h2 style='font-weight: normal;'>Perceptions of <b>your own</b> social media networks</h2>",
     html: `
         <div class="survey-container" style="margin-bottom: 40px;">
             <div class="survey-question">
-                <label for="blame_descriptive_ownNetwork" style="font-weight: normal;">In <b>your current</b> social media networks, what percentage of people typically <b>post messages that blame others</b>?</label>
+                <label for="blame_descriptive_ownNetwork" style="font-weight: normal;">In your social media networks, what percentage of people typically <b>post messages that blame others</b>?</label>
                 <div class="slider-container">
-                    <input type="range" id="blame_descriptive_ownNetwork" name="blame_descriptive_ownNetwork" min="0" max="100" value="50" step="10" required>
-                    <output for="blame_descriptive_ownNetwork" id="blame_descriptive_ownNetwork_value">50%</output>
+                    <div class="slider-labels">
+                        <span>0%</span>
+                        <span>100%</span>
+                    </div>
+                    <input type="range" id="blame_descriptive_ownNetwork" name="blame_descriptive_ownNetwork" min="0" max="100" value="50" step="1" required>
+                    <div class="slider-value">
+                        <output for="blame_descriptive_ownNetwork" id="blame_descriptive_ownNetwork_value">50%</output>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="survey-container" style="margin-bottom: 40px;">
             <div class="survey-question">
-                <label for="praise_descriptive_ownNetwork" style="font-weight: normal;">In <b>your current</b> social media networks, what percentage of people typically <b>post messages that praise others</b>?</label>
+                <label for="praise_descriptive_ownNetwork" style="font-weight: normal;">In your social media networks, what percentage of people typically <b>post messages that praise others</b>?</label>
                 <div class="slider-container">
-                    <input type="range" id="praise_descriptive_ownNetwork" name="praise_descriptive_ownNetwork" min="0" max="100" value="50" step="10" required>
-                    <output for="praise_descriptive_ownNetwork" id="praise_descriptive_ownNetwork_value">50%</output>
+                    <div class="slider-labels">
+                        <span>0%</span>
+                        <span>100%</span>
+                    </div>
+                    <input type="range" id="praise_descriptive_ownNetwork" name="praise_descriptive_ownNetwork" min="0" max="100" value="50" step="1" required>
+                    <div class="slider-value">
+                        <output for="praise_descriptive_ownNetwork" id="praise_descriptive_ownNetwork_value">50%</output>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="survey-container" style="margin-bottom: 40px;">
             <div class="survey-question">
-                <label for="emotion_descriptive_ownNetwork" style="font-weight: normal;">In <b>your current</b> social media networks, what percentage of people typically <b>post messages that are emotional</b>?</label>
+                <label for="emotion_descriptive_ownNetwork" style="font-weight: normal;">In your social media networks, what percentage of people typically <b>post messages that are emotional</b>?</label>
                 <div class="slider-container">
-                    <input type="range" id="emotion_descriptive_ownNetwork" name="emotion_descriptive_ownNetwork" min="0" max="100" value="50" step="10" required>
-                    <output for="emotion_descriptive_ownNetwork" id="emotion_descriptive_ownNetwork_value">50%</output>
+                    <div class="slider-labels">
+                        <span>0%</span>
+                        <span>100%</span>
+                    </div>
+                    <input type="range" id="emotion_descriptive_ownNetwork" name="emotion_descriptive_ownNetwork" min="0" max="100" value="50" step="1" required>
+                    <div class="slider-value">
+                        <output for="emotion_descriptive_ownNetwork" id="emotion_descriptive_ownNetwork_value">50%</output>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="survey-container">
             <div class="survey-question">
-                <label for="political_descriptive_ownNetwork" style="font-weight: normal;">In <b>your current</b> social media networks, what percentage of people typically <b>post messages that are political</b>?</label>
+                <label for="political_descriptive_ownNetwork" style="font-weight: normal;">In your social media networks, what percentage of people typically <b>post messages that are political</b>?</label>
                 <div class="slider-container">
-                    <input type="range" id="political_descriptive_ownNetwork" name="political_descriptive_ownNetwork" min="0" max="100" value="50" step="10" required>
-                    <output for="political_descriptive_ownNetwork" id="political_descriptive_ownNetwork_value">50%</output>
+                    <div class="slider-labels">
+                        <span>0%</span>
+                        <span>100%</span>
+                    </div>
+                    <input type="range" id="political_descriptive_ownNetwork" name="political_descriptive_ownNetwork" min="0" max="100" value="50" step="1" required>
+                    <div class="slider-value">
+                        <output for="political_descriptive_ownNetwork" id="political_descriptive_ownNetwork_value">50%</output>
+                    </div>
                 </div>
             </div>
         </div>
