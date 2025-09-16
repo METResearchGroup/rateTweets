@@ -15,6 +15,18 @@ const jsPsych = initJsPsych({
                     praise_prescriptive: '',
                     emotion_prescriptive: '',
                     poli_prescriptive: '',
+                    blame_descriptive: '',
+                    praise_descriptive: '',
+                    emotion_descriptive: '',
+                    political_descriptive: '',
+                    blame_prescriptive_ownNetwork: '',
+                    praise_prescriptive_ownNetwork: '',
+                    emotion_prescriptive_ownNetwork: '',
+                    poli_prescriptive_ownNetwork: '',
+                    blame_descriptive_ownNetwork: '',
+                    praise_descriptive_ownNetwork: '',
+                    emotion_descriptive_ownNetwork: '',
+                    political_descriptive_ownNetwork: '',
                     gender: '',
                     age: '',
                     language: '',
@@ -64,6 +76,9 @@ const jsPsych = initJsPsych({
 
         // flatten survey responses
         allData.filter({trial_type: 'survey-html-form'}).values().forEach(flattenSurveyResponses);
+        
+        // The descriptive survey is now handled as part of the survey-html-form processing above
+        // No separate handling needed since it uses the same flattenSurveyResponses function
 
         // var csv = allData.csv // collects all data
         // filter out unnecessary columns - but first handle social media feed flattening
@@ -142,11 +157,24 @@ const jsPsych = initJsPsych({
             'image_index',
             'scroll_to_bottom',
             'political_affiliation',  // from pre-survey
+            'condition',              // algorithmic vs control condition
             'consented',
             'blame_prescriptive',
             'praise_prescriptive',
             'emotion_prescriptive',
             'poli_prescriptive',
+            'blame_descriptive',
+            'praise_descriptive',
+            'emotion_descriptive',
+            'political_descriptive',
+            'blame_prescriptive_ownNetwork',
+            'praise_prescriptive_ownNetwork',
+            'emotion_prescriptive_ownNetwork',
+            'poli_prescriptive_ownNetwork',
+            'blame_descriptive_ownNetwork',
+            'praise_descriptive_ownNetwork',
+            'emotion_descriptive_ownNetwork',
+            'political_descriptive_ownNetwork',
             // 'response',
             'gender', 
             'age', 
@@ -375,6 +403,74 @@ function logCategoryProportions(images, feedName) {
 }
 
 
+
+// Function to determine participant condition (algorithmic vs control)
+function getParticipantCondition(participantId) {
+    // Odd participant IDs get algorithmic, even get control
+    return (participantId % 2 === 1) ? 'algorithmic' : 'control';
+}
+
+// Function to select control second feed (similar structure to first feed, but different images)
+function selectControlSecondFeed(participantId, firstFeedData) {
+    console.log('=== Control Second Feed Selection Process ===');
+    
+    // Get images shown in first feed to avoid duplicates
+    const seenImages = firstFeedData.images_shown || [];
+    console.log('Images already seen:', seenImages.length);
+    
+    // Use the same quotas as first feed
+    const controlFeedCategoryQuotas = {
+        'dem_ingroup_praise': 14,
+        'dem_outgroup_blame': 14,
+        'rep_ingroup_praise': 14,
+        'rep_outgroup_blame': 14,
+        'neutral_political': 29,
+        'distractor': 15
+    };
+    
+    let selectedImages = [];
+    
+    // For each category, select the specified number of images (avoiding seen images)
+    Object.entries(controlFeedCategoryQuotas).forEach(([category, quota]) => {
+        // Get all available images for this category
+        const categoryImages = imageCategories[category];
+        
+        // Filter out images already seen in first feed
+        const availableCategoryImages = categoryImages.filter(slideNumber => {
+            const imagePath = `img/full_700/Slide${slideNumber}.png`;
+            return !seenImages.includes(imagePath);
+        });
+        
+        // Calculate starting index based on participant ID + offset to get different images than first feed
+        const startIndex = ((participantId - 1) + 50) % availableCategoryImages.length; // +50 offset for different selection
+        
+        // Select images starting from the calculated index
+        for (let i = 0; i < quota && i < availableCategoryImages.length; i++) {
+            const imageIndex = (startIndex + i) % availableCategoryImages.length;
+            const slideNumber = availableCategoryImages[imageIndex];
+            selectedImages.push(`img/full_700/Slide${slideNumber}.png`);
+        }
+    });
+    
+    // Shuffle the final selection
+    const shuffledImages = selectedImages.sort(() => Math.random() - 0.5);
+    
+    console.log('=== Control Second Feed Final Composition ===');
+    console.log('Total images:', shuffledImages.length);
+    console.log('Control condition: same structure as first feed, different images');
+    
+    // Log category analysis
+    logCategoryProportions(shuffledImages, 'Control Second Feed');
+    
+    // Create source map (all images are "control" source for this condition)
+    const imageSourceMap = {};
+    shuffledImages.forEach(img => imageSourceMap[img] = 'control');
+    
+    return {
+        images: shuffledImages,
+        sourceMap: imageSourceMap
+    };
+}
 
 // Function to select images for the second feed based on first feed interactions
 function selectPersonalizedSecondFeed(participantId, firstFeedData, politicalAffiliation) {
@@ -650,7 +746,7 @@ async function setupExperiment() {
 
         var welcome = {
             type: jsPsychInstructions,
-            pages: ["<div class='instructions'>Welcome! In this task, you will view real social media messages sent by users who discuss politics on Twitter/X.<br><br>You will then be asked to <b>rate how likely you would be to post these messages to your own social media network.</b><br><br>Before we begin, please click <b>Next</b> to consent to participate.</div>"],
+            pages: ["<div class='instructions'>Welcome! In this task, you will be scrolling through mock social media feeds. The posts you will see are <b>real messages</b> we've pulled from social media (e.g., X, Bluesky), but we've scrambled the usernames for privacy.<br><br>As you scroll through the feeds, you can <b>like</b> and <b>share</b> posts that you find interesting, just like on a real social media platform. After viewing the feeds, we'll ask you some questions about the content you viewed as well as your own experience using social media.<br><br>Before we begin, please click <b>Next</b> to consent to participate.</div>"],
             show_clickable_nav: true
         };
         timeline.push(welcome);
@@ -695,6 +791,14 @@ async function setupExperiment() {
             }
         };
         timeline.push(getParticipantIdTrial);
+
+        // Instructions before first social media feed
+        var preFirstFeedInstructions = {
+            type: jsPsychInstructions,
+            pages: ["<div class='instructions'>Great! Now you're ready to begin the main task.<br><br>You will see a social media feed with posts from various users. As you scroll through the feed, your job is simply to <b>like</b> and <b>share</b> posts that you find interesting by clicking the like or share buttons.<br><br>Please scroll through the entire feed at your own pace. You will be able to scroll back up if you'd like to re-read a post.<br><br>Press <b>Next</b> to start viewing the feed.</div>"],
+            show_clickable_nav: true
+        };
+        timeline.push(preFirstFeedInstructions);
 
         // // ORIGINAL IMAGE TRIALS BLOCK 1 - PRELOAD & INSTRUCTIONS
         // // Create a nested timeline for the image trials
@@ -791,7 +895,7 @@ async function setupExperiment() {
         // timeline.push(imageTrials);
 
         // NEW: SCROLLING SOCIAL MEDIA FEED TRIALS
-        // Section 1 with balanced category images
+        // Section 1 with random control images
         var firstFeedTrial = {
             type: jsPsychSocialMediaFeed,
             images: function() {
@@ -809,26 +913,39 @@ async function setupExperiment() {
         // Instructions between sections 1 & 2
         var betweenSectionsInstructions = {
             type: jsPsychInstructions,
-            pages: ["<div class='instructions'>Great! You've completed the first section.<br><br>Now you'll see another feed. This one will include some posts you liked or shared from the previous section, plus some new posts.<br><br>Press <b>Next</b> to continue.</div>"],
+            pages: ["<div class='instructions'>Great! You've completed the first section.<br><br>Now you'll see another social media feed. Just like before, you can <b>like</b> and <b>share</b> posts that interest you. <br><br>After you finish scrolling through the second feed, we will ask you some questions about its content.<br><br>Press <b>Next</b> to view the feed.</div>"],
             show_clickable_nav: true
         };
         timeline.push(betweenSectionsInstructions);
 
         // Second social media feed section
-        // Section 2 with personalized and community images
+        // Section 2 with condition-based selection (algorithmic vs control)
         var secondFeedTrial = {
             type: jsPsychSocialMediaFeed,
             images: function() {
                 // Get data from first feed
                 const firstFeedData = jsPsych.data.get().filter({trial_type: 'social-media-feed'}).last(1).values()[0];
                 
-                // Get political affiliation from stored data
-                const politicalAffiliation = jsPsych.data.get().last(1).values()[0].political_affiliation;
+                // Determine participant condition
+                const condition = getParticipantCondition(ParticipantID);
+                console.log('Participant condition:', condition);
                 
-                const secondFeedResult = selectPersonalizedSecondFeed(ParticipantID, firstFeedData, politicalAffiliation);
+                let secondFeedResult;
+                
+                if (condition === 'control') {
+                    // Control condition: similar structure to first feed, different images
+                    secondFeedResult = selectControlSecondFeed(ParticipantID, firstFeedData);
+                } else {
+                    // Algorithmic condition: personalized based on first feed interactions
+                    const politicalAffiliation = jsPsych.data.get().last(1).values()[0].political_affiliation;
+                    secondFeedResult = selectPersonalizedSecondFeed(ParticipantID, firstFeedData, politicalAffiliation);
+                }
                 
                 // Store the source map globally so the plugin can access it
                 window.currentFeedSourceMap = secondFeedResult.sourceMap;
+                
+                // Store condition in jsPsych data
+                jsPsych.data.addProperties({condition: condition});
                 
                 return secondFeedResult.images;
             },
@@ -842,16 +959,29 @@ async function setupExperiment() {
 
         var demo_instruct_1 = {
             type: jsPsychInstructions,
-            pages: ["<div class='instructions'>Thank you for rating the messages.<br><br>We would now like you to answer a few questions about your perceptions of <b>your own</b> social media networks.<br><br>Please press <b>Next</b> to continue.</div>"],
+            pages: ["<div class='instructions'>Thank you for scrolling through the social media feeds.<br><br>You will now answer a few questions about the content in the <b>second</b> feed you just viewed.<br><br>Please press <b>Next</b> to continue.</div>"],
             show_clickable_nav: true
         };
         timeline.push(demo_instruct_1);
 
-        timeline.push(appropriatenessSurvey);
+        timeline.push(prescriptiveSurvey);
+
+        timeline.push(descriptiveSurvey);
+
+        var demo_instruct_2 = {
+            type: jsPsychInstructions,
+            pages: ["<div class='instructions'>Now that you've judged the social media feeds from our experiment, we'd like to ask you some questions about <b>your own social media networks</b>.<br><br>When answering these questions, think about the experience you've had while scrolling on the social media platforms you use most frequently, also keeping in mind that our experiment feeds are meant to simulate real social media feeds.<br><br>Please press <b>Next</b> to continue.</div>"],
+            show_clickable_nav: true
+        };
+        timeline.push(demo_instruct_2);
+
+        timeline.push(prescriptiveSurvey_ownNetwork);
+
+        timeline.push(descriptiveSurvey_ownNetwork);
 
         var demo_instruct_2  = {
             type: jsPsychInstructions,
-            pages: ["<div class='instructions'>Thanks for providing your responses.<br><br>We would now like you to answer a few short demographics questions, after which you will be redirected back to Prolific.<br><br>Please press <b>Next</b> to continue.</div>"],
+            pages: ["<div class='instructions'>Thanks for providing your responses.<br><br>To finish the survey, we would like you to answer a few short demographics questions, after which you will be redirected back to Prolific.<br><br>Please press <b>Next</b> to continue.</div>"],
             show_clickable_nav: true
         };
         timeline.push(demo_instruct_2);
