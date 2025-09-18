@@ -970,7 +970,7 @@ async function setupExperiment() {
 
         var demo_instruct_2 = {
             type: jsPsychInstructions,
-            pages: ["<div class='instructions'>Now that you've judged the social media feeds from our experiment, we'd like to ask you some questions about <b>your own social media networks</b>.<br><br>When answering these questions, think about the experience you've had while scrolling on the social media platforms you use most frequently, also keeping in mind that our experiment feeds are meant to simulate real social media feeds.<br><br>Please press <b>Next</b> to continue.</div>"],
+            pages: ["<div class='instructions'>Now that you've judged the social media feeds from our experiment, we'd like to ask you some questions about <b>your personal social media networks</b>.<br><br>When answering these questions, think about the experience you've had while scrolling on the social media platforms you use most frequently, also keeping in mind that <b>our experiment feeds are meant to simulate real social media feeds</b>.<br><br>Please press <b>Next</b> to continue.</div>"],
             show_clickable_nav: true
         };
         timeline.push(demo_instruct_2);

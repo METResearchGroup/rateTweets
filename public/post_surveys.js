@@ -472,7 +472,7 @@ const descriptiveSurvey = {
 
 const prescriptiveSurvey_ownNetwork = {
     type: jsPsychSurveyHtmlForm,
-    preamble: "<h2 style='font-weight: normal;'>Perceptions of <b>your own</b> social media networks</h2>",
+    preamble: "<h2 style='font-weight: normal;'>Perceptions of <b>your personal</b> social media networks</h2>",
     html: `
         <div class="survey-container">
             <div class="survey-question">
@@ -564,7 +564,7 @@ const prescriptiveSurvey_ownNetwork = {
 // descriptive survey with slider questions about perceived percentages in the social network
 const descriptiveSurvey_ownNetwork = {
     type: jsPsychSurveyHtmlForm,
-    preamble: "<h2 style='font-weight: normal;'>Perceptions of <b>your own</b> social media networks</h2>",
+    preamble: "<h2 style='font-weight: normal;'>Perceptions of <b>your personal</b> social media networks</h2>",
     html: `
         <div class="survey-container" style="margin-bottom: 40px;">
             <div class="survey-question">
