@@ -404,7 +404,7 @@ const descriptiveSurvey = {
                         <span>0%</span>
                         <span>100%</span>
                     </div>
-                    <input type="range" id="blame_descriptive" name="blame_descriptive" min="0" max="100" value="50" step="1" required>
+                    <input type="range" id="blame_descriptive" name="blame_descriptive" min="0" max="100" value="50" step="1" required data-interacted="false">
                     <div class="slider-value">
                         <output for="blame_descriptive" id="blame_descriptive_value">50%</output>
                     </div>
@@ -419,7 +419,7 @@ const descriptiveSurvey = {
                         <span>0%</span>
                         <span>100%</span>
                     </div>
-                    <input type="range" id="praise_descriptive" name="praise_descriptive" min="0" max="100" value="50" step="1" required>
+                    <input type="range" id="praise_descriptive" name="praise_descriptive" min="0" max="100" value="50" step="1" required data-interacted="false">
                     <div class="slider-value">
                         <output for="praise_descriptive" id="praise_descriptive_value">50%</output>
                     </div>
@@ -434,7 +434,7 @@ const descriptiveSurvey = {
                         <span>0%</span>
                         <span>100%</span>
                     </div>
-                    <input type="range" id="emotion_descriptive" name="emotion_descriptive" min="0" max="100" value="50" step="1" required>
+                    <input type="range" id="emotion_descriptive" name="emotion_descriptive" min="0" max="100" value="50" step="1" required data-interacted="false">
                     <div class="slider-value">
                         <output for="emotion_descriptive" id="emotion_descriptive_value">50%</output>
                     </div>
@@ -449,23 +449,52 @@ const descriptiveSurvey = {
                         <span>0%</span>
                         <span>100%</span>
                     </div>
-                    <input type="range" id="political_descriptive" name="political_descriptive" min="0" max="100" value="50" step="1" required>
+                    <input type="range" id="political_descriptive" name="political_descriptive" min="0" max="100" value="50" step="1" required data-interacted="false">
                     <div class="slider-value">
                         <output for="political_descriptive" id="political_descriptive_value">50%</output>
                     </div>
                 </div>
             </div>
         </div>
+        <div id="validation-message" style="color: red; font-weight: bold; margin-top: 20px; display: none;">
+            Please interact with all sliders before proceeding.
+        </div>
     `,
     button_label: "Next >",
     on_load: function() {
         const sliders = ['blame_descriptive', 'praise_descriptive', 'emotion_descriptive', 'political_descriptive'];
+        
         sliders.forEach(sliderId => {
             const slider = document.getElementById(sliderId);
             const output = document.getElementById(`${sliderId}_value`);
-            slider.oninput = function() {
-                output.value = this.value + '%';
+            
+            // Set initial custom validity to require interaction
+            slider.setCustomValidity('Please interact with this slider.');
+            
+            // Function to mark slider as interacted
+            function markAsInteracted() {
+                slider.setAttribute('data-interacted', 'true');
+                slider.setCustomValidity('');
+                
+                // Hide validation message if all sliders have been interacted with
+                const allInteracted = sliders.every(id => 
+                    document.getElementById(id).getAttribute('data-interacted') === 'true'
+                );
+                if (allInteracted) {
+                    document.getElementById('validation-message').style.display = 'none';
+                }
             }
+            
+            // Track when slider is interacted with (multiple event types)
+            slider.addEventListener('input', function() {
+                output.value = this.value + '%';
+                markAsInteracted();
+            });
+            
+            // Also listen for mouse and keyboard interactions
+            slider.addEventListener('mousedown', markAsInteracted);
+            slider.addEventListener('touchstart', markAsInteracted);
+            slider.addEventListener('keydown', markAsInteracted);
         });
     }
 };
@@ -574,7 +603,7 @@ const descriptiveSurvey_ownNetwork = {
                         <span>0%</span>
                         <span>100%</span>
                     </div>
-                    <input type="range" id="blame_descriptive_ownNetwork" name="blame_descriptive_ownNetwork" min="0" max="100" value="50" step="1" required>
+                    <input type="range" id="blame_descriptive_ownNetwork" name="blame_descriptive_ownNetwork" min="0" max="100" value="50" step="1" required data-interacted="false">
                     <div class="slider-value">
                         <output for="blame_descriptive_ownNetwork" id="blame_descriptive_ownNetwork_value">50%</output>
                     </div>
@@ -589,7 +618,7 @@ const descriptiveSurvey_ownNetwork = {
                         <span>0%</span>
                         <span>100%</span>
                     </div>
-                    <input type="range" id="praise_descriptive_ownNetwork" name="praise_descriptive_ownNetwork" min="0" max="100" value="50" step="1" required>
+                    <input type="range" id="praise_descriptive_ownNetwork" name="praise_descriptive_ownNetwork" min="0" max="100" value="50" step="1" required data-interacted="false">
                     <div class="slider-value">
                         <output for="praise_descriptive_ownNetwork" id="praise_descriptive_ownNetwork_value">50%</output>
                     </div>
@@ -604,7 +633,7 @@ const descriptiveSurvey_ownNetwork = {
                         <span>0%</span>
                         <span>100%</span>
                     </div>
-                    <input type="range" id="emotion_descriptive_ownNetwork" name="emotion_descriptive_ownNetwork" min="0" max="100" value="50" step="1" required>
+                    <input type="range" id="emotion_descriptive_ownNetwork" name="emotion_descriptive_ownNetwork" min="0" max="100" value="50" step="1" required data-interacted="false">
                     <div class="slider-value">
                         <output for="emotion_descriptive_ownNetwork" id="emotion_descriptive_ownNetwork_value">50%</output>
                     </div>
@@ -619,23 +648,52 @@ const descriptiveSurvey_ownNetwork = {
                         <span>0%</span>
                         <span>100%</span>
                     </div>
-                    <input type="range" id="political_descriptive_ownNetwork" name="political_descriptive_ownNetwork" min="0" max="100" value="50" step="1" required>
+                    <input type="range" id="political_descriptive_ownNetwork" name="political_descriptive_ownNetwork" min="0" max="100" value="50" step="1" required data-interacted="false">
                     <div class="slider-value">
                         <output for="political_descriptive_ownNetwork" id="political_descriptive_ownNetwork_value">50%</output>
                     </div>
                 </div>
             </div>
         </div>
+        <div id="validation-message-ownNetwork" style="color: red; font-weight: bold; margin-top: 20px; display: none;">
+            Please interact with all sliders before proceeding.
+        </div>
     `,
     button_label: "Next >",
     on_load: function() {
         const sliders = ['blame_descriptive_ownNetwork', 'praise_descriptive_ownNetwork', 'emotion_descriptive_ownNetwork', 'political_descriptive_ownNetwork'];
+        
         sliders.forEach(sliderId => {
             const slider = document.getElementById(sliderId);
             const output = document.getElementById(`${sliderId}_value`);
-            slider.oninput = function() {
-                output.value = this.value + '%';
+            
+            // Set initial custom validity to require interaction
+            slider.setCustomValidity('Please interact with this slider.');
+            
+            // Function to mark slider as interacted
+            function markAsInteracted() {
+                slider.setAttribute('data-interacted', 'true');
+                slider.setCustomValidity('');
+                
+                // Hide validation message if all sliders have been interacted with
+                const allInteracted = sliders.every(id => 
+                    document.getElementById(id).getAttribute('data-interacted') === 'true'
+                );
+                if (allInteracted) {
+                    document.getElementById('validation-message-ownNetwork').style.display = 'none';
+                }
             }
+            
+            // Track when slider is interacted with (multiple event types)
+            slider.addEventListener('input', function() {
+                output.value = this.value + '%';
+                markAsInteracted();
+            });
+            
+            // Also listen for mouse and keyboard interactions
+            slider.addEventListener('mousedown', markAsInteracted);
+            slider.addEventListener('touchstart', markAsInteracted);
+            slider.addEventListener('keydown', markAsInteracted);
         });
     }
 };
