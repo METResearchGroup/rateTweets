@@ -45,6 +45,13 @@ var jsPsychSocialMediaFeed = (function (jspsych) {
       feed_sources: {
         type: jspsych.ParameterType.ARRAY,
         array: true
+      },
+      feed_duration_seconds: {
+        type: jspsych.ParameterType.FLOAT
+      },
+      post_dwell_times: {
+        type: jspsych.ParameterType.ARRAY,
+        array: true
       }
     }
   };
@@ -57,6 +64,9 @@ var jsPsychSocialMediaFeed = (function (jspsych) {
     static info = info;
     
     trial(display_element, trial) {
+      // Record start time for duration tracking
+      var startTime = performance.now();
+      
       // Create the feed container
       var feedHTML = `
         <div class="social-media-feed-container">
@@ -105,6 +115,11 @@ var jsPsychSocialMediaFeed = (function (jspsych) {
       var likeStates = new Array(trial.images.length).fill(false);
       var shareStates = new Array(trial.images.length).fill(false);
       var scrollToBottom = false;
+      
+      // Initialize dwell time tracking
+      var postDwellTimes = new Array(trial.images.length).fill(0);
+      var postVisibilityStart = new Array(trial.images.length).fill(null);
+      var currentlyVisible = new Set();
 
       // Global functions for like/share buttons
       window.toggleLike = function(index) {
@@ -139,6 +154,41 @@ var jsPsychSocialMediaFeed = (function (jspsych) {
         }
       };
 
+      // Setup intersection observer for dwell time tracking
+      var observerOptions = {
+        root: document.getElementById('feed-content'),
+        rootMargin: '0px',
+        threshold: 0.5 // Post is considered "viewed" when 50% is visible
+      };
+      
+      var postObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          var postIndex = parseInt(entry.target.getAttribute('data-index'));
+          var currentTime = performance.now();
+          
+          if (entry.isIntersecting) {
+            // Post became visible
+            if (!currentlyVisible.has(postIndex)) {
+              currentlyVisible.add(postIndex);
+              postVisibilityStart[postIndex] = currentTime;
+            }
+          } else {
+            // Post left view
+            if (currentlyVisible.has(postIndex) && postVisibilityStart[postIndex] !== null) {
+              currentlyVisible.delete(postIndex);
+              var dwellTime = (currentTime - postVisibilityStart[postIndex]) / 1000;
+              postDwellTimes[postIndex] += Math.round(dwellTime * 10000) / 10000;
+              postVisibilityStart[postIndex] = null;
+            }
+          }
+        });
+      }, observerOptions);
+      
+      // Observe all posts
+      document.querySelectorAll('.feed-post').forEach(function(post) {
+        postObserver.observe(post);
+      });
+
       // Handle scrolling
       var feedContent = document.getElementById('feed-content');
       var continueBtn = document.getElementById('continue-btn');
@@ -158,6 +208,26 @@ var jsPsychSocialMediaFeed = (function (jspsych) {
 
       // Continue button handler
       continueBtn.addEventListener('click', function() {
+        // Calculate duration in seconds
+        var endTime = performance.now();
+        var durationSeconds = Math.round((endTime - startTime) / 1000 * 10000) / 10000;
+        
+        // Finalize dwell times for any currently visible posts
+        currentlyVisible.forEach(function(postIndex) {
+          if (postVisibilityStart[postIndex] !== null) {
+            var dwellTime = (endTime - postVisibilityStart[postIndex]) / 1000;
+            postDwellTimes[postIndex] += dwellTime;
+          }
+        });
+        
+        // Round all dwell times to 4 decimal places
+        postDwellTimes = postDwellTimes.map(function(time) {
+          return Math.round(time * 10000) / 10000;
+        });
+        
+        // Disconnect the observer to clean up
+        postObserver.disconnect();
+        
         // Get feed sources from global variable (if available)
         var feedSources = [];
         if (window.currentFeedSourceMap) {
@@ -181,7 +251,9 @@ var jsPsychSocialMediaFeed = (function (jspsych) {
           liked_images: trial.images.filter((_, i) => likeStates[i]),
           shared_images: trial.images.filter((_, i) => shareStates[i]),
           scroll_to_bottom: scrollToBottom,
-          feed_sources: feedSources
+          feed_sources: feedSources,
+          feed_duration_seconds: durationSeconds,
+          post_dwell_times: postDwellTimes
         });
       });
 

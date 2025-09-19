@@ -97,6 +97,8 @@ const jsPsych = initJsPsych({
                         ...trial, // Copy all original trial data
                         image_shown: fileName,
                         image_category: getImageCategory(fileName),
+                        feed_duration_seconds: (index === trial.images_shown.length - 1) ? trial.feed_duration_seconds : '',
+                        post_dwell_seconds: trial.post_dwell_times ? trial.post_dwell_times[index] : '',
                         feed_source: trial.feed_sources ? trial.feed_sources[index] : '',
                         like_state: trial.like_states ? trial.like_states[index] : false,
                         share_state: trial.share_states ? trial.share_states[index] : false,
@@ -111,6 +113,7 @@ const jsPsych = initJsPsych({
                     delete flattenedTrial.liked_images;
                     delete flattenedTrial.shared_images;
                     delete flattenedTrial.feed_sources;
+                    delete flattenedTrial.post_dwell_times;
                     
                     flattenedTrials.push(flattenedTrial);
                 });
@@ -151,6 +154,8 @@ const jsPsych = initJsPsych({
             'trial_index', 
             'image_shown',
             'image_category',
+            'feed_duration_seconds',
+            'post_dwell_seconds',
             'feed_source',
             'like_state',
             'share_state',
