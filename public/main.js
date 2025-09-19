@@ -180,7 +180,6 @@ const jsPsych = initJsPsych({
             'praise_descriptive_ownNetwork',
             'emotion_descriptive_ownNetwork',
             'political_descriptive_ownNetwork',
-            // 'response',
             'gender', 
             'age', 
             'language', 
@@ -286,7 +285,7 @@ async function saveExperimentData(csvData) {
 }
 
 // ************************************************************************************************************* 
-// NEW IMAGE SORTING SECTION **********************************************************************************
+// NEW IMAGE SORTING SECTION ***********************************************************************************
 // *************************************************************************************************************
 
 const imageCategories = {
@@ -681,28 +680,6 @@ function selectPersonalizedSecondFeed(participantId, firstFeedData, politicalAff
 
 // function to generate a list of images for each participant
 function generateImageList(ParticipantID, politicalParty) {
-    // special case for participant 206, or last participant that signs up & there are images that still need to be shown
-    // if (ParticipantID === 206) {
-    //     return [
-    //         'img/dem/Slide194.png',
-    //         'img/dem/Slide217.png',
-    //         'img/dem/Slide219.png',
-    //         'img/dem/Slide228.png',
-    //         'img/dem/Slide241.png',
-    //         'img/dem/Slide245.png',
-    //         'img/dem/Slide271.png',
-    //         'img/dem/Slide307.png',
-    //         'img/dem/Slide319.png',
-    //         'img/dem/Slide346.png',
-    //         'img/dem/Slide39.png',
-    //         'img/dem/Slide466.png',
-    //         'img/dem/Slide483.png',
-    //         'img/dem/Slide524.png',
-    //         'img/dem/Slide69.png',
-    //         'img/dem/Slide73.png',
-    //         'img/dem/Slide78.png'
-    //     ];
-    // }
 
     let baseFolder;
     let numImages;
@@ -804,100 +781,7 @@ async function setupExperiment() {
             show_clickable_nav: true
         };
         timeline.push(preFirstFeedInstructions);
-
-        // // ORIGINAL IMAGE TRIALS BLOCK 1 - PRELOAD & INSTRUCTIONS
-        // // Create a nested timeline for the image trials
-        // var imageTrialsBlock = {
-        //     timeline: [
-        //         {
-        //             type: jsPsychCallFunction,
-        //             func: function() {
-        //                 const politicalAffiliation = jsPsych.data.get().last(1).values()[0].political_affiliation;
-        //                 // console.log("Political affiliation:", politicalAffiliation);
-                        
-        //                 participant_images = generateImageList(ParticipantID, politicalAffiliation);
-        //                 console.log("Generated images:", participant_images);
-                        
-        //                 participant_images = jsPsych.randomization.shuffle(participant_images);
-        //                 console.log("Shuffled images:", participant_images);
-                        
-        //                 jsPsych.data.addProperties({
-        //                     participant_images: participant_images
-        //                 });
-        //             }
-        //         },
-        //         {
-        //             type: jsPsychPreload,
-        //             images: function() {
-        //                 return participant_images;
-        //             }
-        //         },
-        //         {
-        //             type: jsPsychInstructions,
-        //             pages: function() {
-        //                 return [`<div class='instructions'>Great! You are now ready to begin the task.<br><br>You will see ${participant_images.length} social media messages in total. Your job is to rate how likely you would be to post each message to your own social media network, on a scale from 1 (not at all likely) to 7 (very likely).<br><br>Note: All usernames have been anonymized.<br><br>Press <b>Next</b> to begin.</div>`];
-        //             },
-        //             show_clickable_nav: true
-        //         }
-        //     ]
-        // };
-        // timeline.push(imageTrialsBlock);
-
-        // // ORIGINAL IMAGE TRIALS BLOCK 2 - SLIDER RESPONSE TRIALS
-        // var imageTrials = {
-        //     timeline: [{
-        //         type: jsPsychHtmlSliderResponse,
-        //         stimulus: function() {
-        //             const currentIndex = jsPsych.data.get().filter({trial_type: 'html-slider-response'}).count();
-        //             const img = participant_images[currentIndex];
-        //             return `
-        //                 <div class="social-media-feed">
-        //                     <img src="${img}" class="stimulus">
-        //                 </div>
-        //                 <p class="slider-question">How <b>likely</b> would you be to post this message to your own social media network?</p>
-        //                 <p class="progress-text">${currentIndex + 1} of ${participant_images.length}</p>
-        //             `;
-        //         },
-        //         labels: ['1', '2', '3', '4', '5', '6', '7'],
-        //         prompt: "",
-        //         button_label: 'Next >',
-        //         data: function() {
-        //             const currentIndex = jsPsych.data.get().filter({trial_type: 'html-slider-response'}).count();
-        //             return {
-        //                 trial_index: currentIndex,
-        //                 image_shown: participant_images[currentIndex].split('/').pop()
-        //             };
-        //         },
-        //         require_movement: true,
-        //         slider_width: 600,
-        //         min: 1,
-        //         max: 7,
-        //         step: 1,
-        //         slider_start: 4,
-        //         on_load: function() {
-        //             var sliderContainer = document.querySelector('.jspsych-html-slider-response-container');
-        //             var customLabels = document.createElement('div');
-        //             customLabels.className = 'custom-slider-labels';
-        //             customLabels.innerHTML = `
-        //                 <span>Not at all likely</span>
-        //                 <span>Somewhat likely</span>
-        //                 <span>Very likely</span>
-        //             `;
-        //             sliderContainer.appendChild(customLabels);
-        //         }
-        //     }],
-        //     // }].map(trial => {
-        //     //     if (window.makeRequireMovementOptional) {
-        //     //         return window.makeRequireMovementOptional(trial);
-        //     //     }
-        //     //     return trial;
-        //     // }),
-        //     loop_function: function() {
-        //         const currentCount = jsPsych.data.get().filter({trial_type: 'html-slider-response'}).count();
-        //         return currentCount < participant_images.length;
-        //     }
-        // };
-        // timeline.push(imageTrials);
+        
 
         // NEW: SCROLLING SOCIAL MEDIA FEED TRIALS
         // Section 1 with random control images
