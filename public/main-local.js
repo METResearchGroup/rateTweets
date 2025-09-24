@@ -664,8 +664,24 @@ function selectPersonalizedSecondFeed(participantId, firstFeedData, politicalAff
     const communityPool = communitySlideNumbers.map(slideNum => `${communityDirectory}/Slide${slideNum}.png`);
     
     // Filter out any images that were already shown in first feed or selected for personalization
-    const allSelectedImages = [...seenImages, ...personalizedImages];
-    const availableCommunityImages = communityPool.filter(img => !allSelectedImages.includes(img));
+    // Extract slide numbers from seen images and personalized images for proper comparison
+    const seenSlideNumbers = seenImages.map(img => {
+        const match = img.match(/Slide(\d+)\.png/);
+        return match ? parseInt(match[1]) : null;
+    }).filter(num => num !== null);
+    
+    const personalizedSlideNumbers = personalizedImages.map(img => {
+        const match = img.match(/Slide(\d+)\.png/);
+        return match ? parseInt(match[1]) : null;
+    }).filter(num => num !== null);
+    
+    const allUsedSlideNumbers = [...seenSlideNumbers, ...personalizedSlideNumbers];
+    
+    const availableCommunityImages = communityPool.filter(img => {
+        const match = img.match(/Slide(\d+)\.png/);
+        const slideNumber = match ? parseInt(match[1]) : null;
+        return slideNumber && !allUsedSlideNumbers.includes(slideNumber);
+    });
     
     console.log('Available community images:', availableCommunityImages.length);
     
