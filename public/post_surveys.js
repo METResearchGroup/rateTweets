@@ -499,6 +499,62 @@ const descriptiveSurvey = {
     }
 };
 
+const extreme_polarization_survey = {
+    type: jsPsychSurveyHtmlForm,
+    preamble: "<h2 style='font-weight: normal;'>Perceptions of the <b>second</b> social media network (feed) you viewed</h2>",
+    html: `
+        <div class="survey-container">
+            <div class="survey-question">
+                <div>How <b>politically extreme</b> do you think members of the <b>second</b> social media network you viewed are?</div>
+                <div class="likert-container">
+                    <div class="likert-scale">
+                        ${createLikertOptions('poli_extreme', 5)}
+                    </div>
+                    <div class="likert-labels">
+                        <span>1 - Not at all extreme</span>
+                        <span>2 - Slightly extreme</span>
+                        <span>3 - Somewhat extreme</span>
+                        <span>4 - Fairly extreme</span>
+                        <span>5 - Completely extreme</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="survey-container">
+            <div class="survey-question">
+                <div>How much do you think members of the <b>second</b> social media network you viewed <b>dislike their political outgroup</b>?</div>
+                <div class="likert-container">
+                    <div class="likert-scale">
+                        ${createLikertOptions('affect_polarization', 5)}
+                    </div>
+                    <div class="likert-labels">
+                        <span>1 - Not at all</span>
+                        <span>2 - Slightly</span>
+                        <span>3 - Somewhat</span>
+                        <span>4 - Fairly</span>
+                        <span>5 - Completely</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
+    button_label: "Next >",
+
+    on_load: function() {
+
+        setupLikertScales();
+
+        // window.removeRequiredAttributes();
+    }
+};
+
+
+
+
+
+
+
+
 const prescriptiveSurvey_ownNetwork = {
     type: jsPsychSurveyHtmlForm,
     preamble: "<h2 style='font-weight: normal;'>Perceptions of <b>your personal</b> social media networks</h2>",
@@ -698,6 +754,59 @@ const descriptiveSurvey_ownNetwork = {
     }
 };
 
+const extreme_polarization_survey_ownNetwork = {
+    type: jsPsychSurveyHtmlForm,
+    preamble: "<h2 style='font-weight: normal;'>Perceptions of <b>your personal</b> social media networks</h2>",
+    html: `
+        <div class="survey-container">
+            <div class="survey-question">
+                <div>How <b>politically extreme</b> do you think members of your own social media networks are?</div>
+                <div class="likert-container">
+                    <div class="likert-scale">
+                        ${createLikertOptions('poli_extreme_ownNetwork', 5)}
+                    </div>
+                    <div class="likert-labels">
+                        <span>1 - Not at all extreme</span>
+                        <span>2 - Slightly extreme</span>
+                        <span>3 - Somewhat extreme</span>
+                        <span>4 - Fairly extreme</span>
+                        <span>5 - Completely extreme</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="survey-container">
+            <div class="survey-question">
+                <div>How much do you think members of your own social media networks <b>dislike their political outgroup</b>?</div>
+                <div class="likert-container">
+                    <div class="likert-scale">
+                        ${createLikertOptions('affect_polarization_ownNetwork', 5)}
+                    </div>
+                    <div class="likert-labels">
+                        <span>1 - Not at all</span>
+                        <span>2 - Slightly</span>
+                        <span>3 - Somewhat</span>
+                        <span>4 - Fairly</span>
+                        <span>5 - Completely</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
+    button_label: "Next >",
+
+    on_load: function() {
+
+        setupLikertScales();
+
+        // window.removeRequiredAttributes();
+    }
+};
+
+
+
+
+
 // export surveys so they can be imported in the main file
 if (typeof module !== 'undefined') {
     module.exports = {
@@ -706,7 +815,9 @@ if (typeof module !== 'undefined') {
         socialMediaSurvey,
         prescriptiveSurvey,
         descriptiveSurvey,
+        extreme_polarization_survey,
         prescriptiveSurvey_ownNetwork,
         descriptiveSurvey_ownNetwork,
+        extreme_polarization_survey_ownNetwork
     };
 }

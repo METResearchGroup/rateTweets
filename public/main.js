@@ -19,6 +19,8 @@ const jsPsych = initJsPsych({
                     praise_descriptive: '',
                     emotion_descriptive: '',
                     political_descriptive: '',
+                    poli_extreme: '',
+                    affect_polarization: '',
                     blame_prescriptive_ownNetwork: '',
                     praise_prescriptive_ownNetwork: '',
                     emotion_prescriptive_ownNetwork: '',
@@ -27,6 +29,8 @@ const jsPsych = initJsPsych({
                     praise_descriptive_ownNetwork: '',
                     emotion_descriptive_ownNetwork: '',
                     political_descriptive_ownNetwork: '',
+                    poli_extreme_ownNetwork: '',
+                    affect_polarization_ownNetwork: '',
                     gender: '',
                     age: '',
                     language: '',
@@ -172,6 +176,8 @@ const jsPsych = initJsPsych({
             'praise_descriptive',
             'emotion_descriptive',
             'political_descriptive',
+            'poli_extreme',
+            'affect_polarization',
             'blame_prescriptive_ownNetwork',
             'praise_prescriptive_ownNetwork',
             'emotion_prescriptive_ownNetwork',
@@ -180,6 +186,8 @@ const jsPsych = initJsPsych({
             'praise_descriptive_ownNetwork',
             'emotion_descriptive_ownNetwork',
             'political_descriptive_ownNetwork',
+            'poli_extreme_ownNetwork',
+            'affect_polarization_ownNetwork',
             'gender', 
             'age', 
             'language', 
@@ -214,8 +222,8 @@ const jsPsych = initJsPsych({
                 document.body.innerHTML = `
                     <div style="text-align: center; margin-top: 50px;">
                         <p>Thank you for participating! 
-                        <a href="https://app.prolific.com/submissions/complete?cc=CV0XRWGP" target="_blank">
-                            <b>Click here</b></a> to be redirected to Prolific (completion code <b>CV0XRWGP</b>).
+                        <a href="https://app.prolific.com/submissions/complete?cc=CS7I5JAE" target="_blank">
+                            <b>Click here</b></a> to be redirected to Prolific (completion code <b>CS7I5JAE</b>).
                         </p>
                     </div>
                 `;
@@ -873,6 +881,8 @@ async function setupExperiment() {
 
         timeline.push(descriptiveSurvey);
 
+        timeline.push(extreme_polarization_survey);
+
         var demo_instruct_2 = {
             type: jsPsychInstructions,
             pages: ["<div class='instructions'>Now that you've judged the social media feeds from our experiment, we'd like to ask you some questions about <b>your personal social media networks</b>.<br><br>When answering these questions, think about the experience you've had while scrolling on the social media platforms you use most frequently, also keeping in mind that <b>our experiment feeds are meant to simulate real social media feeds</b>.<br><br>Please press <b>Next</b> to continue.</div>"],
@@ -883,6 +893,8 @@ async function setupExperiment() {
         timeline.push(prescriptiveSurvey_ownNetwork);
 
         timeline.push(descriptiveSurvey_ownNetwork);
+
+        timeline.push(extreme_polarization_survey_ownNetwork);
 
         var demo_instruct_2  = {
             type: jsPsychInstructions,
